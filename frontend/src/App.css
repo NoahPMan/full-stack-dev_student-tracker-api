@@ -1,0 +1,9 @@
+.app-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.app-content h2 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
