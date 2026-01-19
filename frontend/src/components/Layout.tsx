@@ -1,5 +1,6 @@
 import React from 'react';
 import './Layout.css';
+import Footer from './Footer/Footer';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -11,14 +12,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <header className="layout-header">
         <h1>Student Tracker Application</h1>
       </header>
-      
+
       <main className="layout-main">
         {children}
       </main>
-      
-      <footer className="layout-footer">
-        <p>&copy; 2025 Code Trackers. All rights reserved.</p>
-      </footer>
+
+      <Footer />
     </div>
   );
 };
