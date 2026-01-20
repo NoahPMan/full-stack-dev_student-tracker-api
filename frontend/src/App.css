@@ -1,9 +1,17 @@
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 18px;
+  color: #36382E;
+  background-color: #EDE6E3;
+  margin: 0;
+}
+
 .app-content {
   max-width: 1200px;
   margin: 0 auto;
 }
 
 .app-content h2 {
-  color: #2c3e50;
+  color: #36382E;
   margin-bottom: 1rem;
 }
