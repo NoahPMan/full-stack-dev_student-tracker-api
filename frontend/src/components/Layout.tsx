@@ -1,6 +1,6 @@
 import React from 'react';
+import Navigation from './Navigation';
 import './Layout.css';
-import Footer from './Footer/Footer';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,12 +12,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <header className="layout-header">
         <h1>Student Tracker Application</h1>
       </header>
-
+      
+      <Navigation />
+      
       <main className="layout-main">
         {children}
       </main>
-
-      <Footer />
+      
+      <footer className="layout-footer">
+        <p>&copy; 2025 Code Trackers. All rights reserved.</p>
+      </footer>
     </div>
   );
 };
