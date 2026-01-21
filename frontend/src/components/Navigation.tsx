@@ -1,49 +1,31 @@
-import React, { useState } from 'react';
-import './Navigation.css';
+import { NavLink } from "react-router-dom";
+import "./Navigation.css";
 
-type NavItem = 'home' | 'courses' | 'assignments';
-
-const Navigation: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<NavItem>('home');
-
-  const handleNavClick = (tab: NavItem) => {
-    setActiveTab(tab);
-    console.log(`Navigated to: ${tab}`);
-  };
-
+export default function Navigation() {
   return (
     <nav className="navigation">
       <ul className="nav-list">
         <li className="nav-item">
-          <button
-            className={`nav-button ${activeTab === 'home' ? 'active' : ''}`}
-            onClick={() => handleNavClick('home')}
-          >
+          <NavLink to="/" end className="nav-button">
             <span className="nav-icon">🏠</span>
             <span className="nav-text">Home</span>
-          </button>
+          </NavLink>
         </li>
+
         <li className="nav-item">
-          <button
-            className={`nav-button ${activeTab === 'courses' ? 'active' : ''}`}
-            onClick={() => handleNavClick('courses')}
-          >
+          <NavLink to="/courses" className="nav-button">
             <span className="nav-icon">📚</span>
             <span className="nav-text">Courses</span>
-          </button>
+          </NavLink>
         </li>
+
         <li className="nav-item">
-          <button
-            className={`nav-button ${activeTab === 'assignments' ? 'active' : ''}`}
-            onClick={() => handleNavClick('assignments')}
-          >
+          <NavLink to="/assignments" className="nav-button">
             <span className="nav-icon">📝</span>
             <span className="nav-text">Assignments</span>
-          </button>
+          </NavLink>
         </li>
       </ul>
     </nav>
   );
-};
-
-export default Navigation;
+}
