@@ -1,15 +1,18 @@
-import Layout from './components/Layout';
-import './App.css';
+import { Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import Home from "./pages/Home";
+import Courses from "./pages/Courses";
+import Assignments from "./pages/Assignments";
+import "./App.css";
 
-function App() {
+export default function App() {
   return (
     <Layout>
-      <div className="app-content">
-        <h2>Welcome to Student Tracker</h2>
-        <p>Manage your courses, assignments, and grades all in one place.</p>
-      </div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/courses" element={<Courses />} />
+        <Route path="/assignments" element={<Assignments />} />
+      </Routes>
     </Layout>
   );
 }
-
-export default App;

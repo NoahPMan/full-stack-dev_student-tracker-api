@@ -1,0 +1,176 @@
+.homework-list {
+  padding: 1rem;
+  border: 1px solid #d7dde5;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #18222c;
+}
+
+.homework-list__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: .75rem;
+}
+
+.homework-list__summary {
+  font-size: .95rem;
+  color: #3a4453;
+}
+
+.homework-list__toolbar {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+  margin-bottom: .75rem;
+}
+
+.chip {
+  border: 1px solid #c9d1da;
+  background: #f8fafc;
+  color: #18222c;
+  border-radius: 999px;
+  padding: .25rem .6rem;
+  font-size: .9rem;
+  cursor: pointer;
+}
+
+.chip--active {
+  background: #0F62FE;
+  border-color: #0F62FE;
+  color: #fff;
+}
+
+.homework-list__items {
+  list-style: decimal;
+  padding-left: 1.25rem;
+  margin: 0;
+  display: grid;
+  gap: .75rem;
+}
+
+.homework-card {
+  border: 1px solid #c9d1da;
+  border-radius: 8px;
+  padding: .8rem .95rem;
+  background: #f8fafc;
+}
+
+.homework-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.homework-card__title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.homework-card__link {
+  color: #0F62FE;
+  text-decoration: none;
+}
+
+.homework-card__link:hover,
+.homework-card__link:focus {
+  text-decoration: underline;
+}
+
+.homework-card__actions {
+  display: flex;
+  gap: .5rem;
+}
+
+.btn {
+  font-size: .85rem;
+  padding: .35rem .6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btn--secondary {
+  background: #e8eef6;
+  color: #0f2547;
+  border-color: #bcd0ea;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: #0f2547;
+  border-color: #c9d1da;
+}
+
+.homework-card__meta-row {
+  margin-top: .5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+}
+
+.homework-meta {
+  display: grid;
+  gap: .3rem;
+}
+
+.homework-meta__row {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: .5rem;
+}
+
+.homework-card__details {
+  margin-top: .5rem;
+  padding-top: .5rem;
+  border-top: 1px dashed #c9d1da;
+}
+
+.badge {
+  display: inline-block;
+  min-width: 88px;
+  text-align: center;
+  font-size: .8rem;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.badge--todo {
+  background: #6c757d;
+}
+
+.badge--in-progress {
+  background: #ff7a00;
+}
+
+.badge--done {
+  background: #198754;
+}
+
+.homework-list__footer {
+  margin-top: .8rem;
+}
+
+.legend {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.legend .badge {
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  min-width: 0;
+  border-radius: 3px;
+}
