@@ -77,12 +77,15 @@ function HomeworkCard({
   onToggleStatus: (id: string) => void;
   onRemove: (id: string) => void;
 }) {
-  const fmt = (iso: string) =>
-    new Date(iso).toLocaleDateString(undefined, {
+  const fmt = (ymd: string) => {
+    const [y, m, d] = ymd.split("-").map(Number);
+    const local = new Date(y, (m ?? 1) - 1, d ?? 1);
+    return local.toLocaleDateString(undefined, {
       year: "numeric",
       month: "short",
       day: "numeric"
     });
+  };
 
   return (
     <article className="homework-card">
@@ -214,12 +217,8 @@ export default function HomeworkList({
   };
 
   const filteredSorted = useMemo(() => {
-    const out = data.filter((it) =>
-      statusFilter === "all" ? true : it.status === statusFilter
-    );
-    return out.sort(
-      (a, b) => new Date(a.due).getTime() - new Date(b.due).getTime()
-    );
+    const out = data.filter((it) => (statusFilter === "all" ? true : it.status === statusFilter));
+    return out.sort((a, b) => new Date(a.due).getTime() - new Date(b.due).getTime());
   }, [data, statusFilter]);
 
   return (
@@ -240,6 +239,7 @@ export default function HomeworkList({
             type="button"
             className={`chip ${statusFilter === opt ? "chip--active" : ""}`}
             onClick={() => setStatusFilter(opt)}
+            aria-pressed={statusFilter === opt}
           >
             {opt === "all" ? "All" : opt.replace("-", " ")}
           </button>
