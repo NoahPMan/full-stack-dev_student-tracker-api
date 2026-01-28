@@ -13,24 +13,69 @@ export type HomeworkItem = {
   url?: string;
 };
 
-function StatusBadge({ status }: { status: HomeworkStatus }) {
+function HomeworkForm({ onAdd }: { onAdd: (item: HomeworkItem) => void }) {
+  const [title, setTitle] = useState("");
+  const [course, setCourse] = useState("");
+  const [due, setDue] = useState("");
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim() || !course.trim() || !due.trim()) return;
+
+    onAdd({
+      id: crypto.randomUUID(),
+      title,
+      course,
+      due,
+      status: "todo"
+    });
+
+    setTitle("");
+    setCourse("");
+    setDue("");
+  };
+
   return (
-    <span className={`badge badge--${status}`}>
-      {status.replace("-", " ")}
-    </span>
+    <form className="hw-form" onSubmit={submit}>
+      <input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Homework title"
+        required
+      />
+      <input
+        value={course}
+        onChange={(e) => setCourse(e.target.value)}
+        placeholder="Course code"
+        required
+      />
+      <input
+        type="date"
+        value={due}
+        onChange={(e) => setDue(e.target.value)}
+        required
+      />
+      <button type="submit">Add</button>
+    </form>
   );
+}
+
+function StatusBadge({ status }: { status: HomeworkStatus }) {
+  return <span className={`badge badge--${status}`}>{status.replace("-", " ")}</span>;
 }
 
 function HomeworkCard({
   item,
   isExpanded,
   onToggleExpand,
-  onToggleStatus
+  onToggleStatus,
+  onRemove
 }: {
   item: HomeworkItem;
   isExpanded: boolean;
   onToggleExpand: (id: string) => void;
   onToggleStatus: (id: string) => void;
+  onRemove: (id: string) => void;
 }) {
   const fmt = (iso: string) =>
     new Date(iso).toLocaleDateString(undefined, {
@@ -68,6 +113,14 @@ function HomeworkCard({
           >
             {isExpanded ? "Hide details" : "Show details"}
           </button>
+
+          <button
+            type="button"
+            className="btn btn--danger"
+            onClick={() => onRemove(item.id)}
+          >
+            Remove
+          </button>
         </div>
       </div>
 
@@ -95,9 +148,7 @@ function HomeworkCard({
 
       {isExpanded && (
         <div className="homework-card__details">
-          <p className="hw-note">
-            Break this task into smaller steps for better workflow.
-          </p>
+          <p className="hw-note">Break this task into smaller steps for better workflow.</p>
         </div>
       )}
     </article>
@@ -140,25 +191,30 @@ export default function HomeworkList({
 
   const [data, setData] = useState(items ?? demoItems);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] =
-    useState<"all" | HomeworkStatus>("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | HomeworkStatus>("all");
+
+  const addItem = (item: HomeworkItem) => {
+    setData((prev) => [...prev, item]);
+  };
+
+  const removeItem = (id: string) => {
+    setData((prev) => prev.filter((it) => it.id !== id));
+  };
 
   const toggleStatus = (id: string) => {
-    setData(prev =>
-      prev.map(it =>
-        it.id === id
-          ? { ...it, status: it.status === "done" ? "todo" : "done" }
-          : it
+    setData((prev) =>
+      prev.map((it) =>
+        it.id === id ? { ...it, status: it.status === "done" ? "todo" : "done" } : it
       )
     );
   };
 
   const toggleExpand = (id: string) => {
-    setExpandedId(prev => (prev === id ? null : id));
+    setExpandedId((prev) => (prev === id ? null : id));
   };
 
   const filteredSorted = useMemo(() => {
-    const out = data.filter(it =>
+    const out = data.filter((it) =>
       statusFilter === "all" ? true : it.status === statusFilter
     );
     return out.sort(
@@ -171,13 +227,14 @@ export default function HomeworkList({
       <header className="homework-list__header">
         <h2>{heading}</h2>
         <p className="homework-list__summary">
-          {filteredSorted.length}{" "}
-          {filteredSorted.length === 1 ? "item" : "items"}
+          {filteredSorted.length} {filteredSorted.length === 1 ? "item" : "items"}
         </p>
       </header>
 
+      <HomeworkForm onAdd={addItem} />
+
       <div className="homework-list__toolbar">
-        {(["all", "todo", "in-progress", "done"] as const).map(opt => (
+        {(["all", "todo", "in-progress", "done"] as const).map((opt) => (
           <button
             key={opt}
             type="button"
@@ -190,13 +247,14 @@ export default function HomeworkList({
       </div>
 
       <ol className="homework-list__items">
-        {filteredSorted.map(hw => (
+        {filteredSorted.map((hw) => (
           <li key={hw.id} className="homework-list__item">
             <HomeworkCard
               item={hw}
               isExpanded={expandedId === hw.id}
               onToggleExpand={toggleExpand}
               onToggleStatus={toggleStatus}
+              onRemove={removeItem}
             />
           </li>
         ))}
