@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import "./HomeworkList.css";
 
 export type HomeworkStatus = "todo" | "in-progress" | "done";
@@ -12,6 +12,17 @@ export type HomeworkItem = {
   estMins?: number;
   url?: string;
 };
+
+const STORAGE_KEY = "homeworkItems";
+
+function safeParse<T>(raw: string | null): T | null {
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+}
 
 function HomeworkForm({ onAdd }: { onAdd: (item: HomeworkItem) => void }) {
   const [title, setTitle] = useState("");
@@ -68,13 +79,13 @@ function HomeworkCard({
   item,
   isExpanded,
   onToggleExpand,
-  onToggleStatus,
+  onCycleStatus,
   onRemove
 }: {
   item: HomeworkItem;
   isExpanded: boolean;
   onToggleExpand: (id: string) => void;
-  onToggleStatus: (id: string) => void;
+  onCycleStatus: (id: string) => void;
   onRemove: (id: string) => void;
 }) {
   const fmt = (ymd: string) => {
@@ -86,6 +97,13 @@ function HomeworkCard({
       day: "numeric"
     });
   };
+
+  const statusActionLabel =
+    item.status === "todo"
+      ? "Start (In progress)"
+      : item.status === "in-progress"
+      ? "Mark Done"
+      : "Reopen (To do)";
 
   return (
     <article className="homework-card">
@@ -104,17 +122,9 @@ function HomeworkCard({
           <button
             type="button"
             className="btn btn--secondary"
-            onClick={() => onToggleStatus(item.id)}
+            onClick={() => onCycleStatus(item.id)}
           >
-            {item.status === "done" ? "Undo Done" : "Mark Done"}
-          </button>
-
-          <button
-            type="button"
-            className="btn btn--ghost"
-            onClick={() => onToggleExpand(item.id)}
-          >
-            {isExpanded ? "Hide details" : "Show details"}
+            {statusActionLabel}
           </button>
 
           <button
@@ -192,9 +202,22 @@ export default function HomeworkList({
     }
   ];
 
-  const [data, setData] = useState(items ?? demoItems);
+  // 1) Initialize from localStorage on first render (preferred), then fall back.
+  const [data, setData] = useState<HomeworkItem[]>(
+    () => safeParse<HomeworkItem[]>(typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null)
+      ?? items
+      ?? demoItems
+  );
+
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | HomeworkStatus>("all");
+
+  // 2) Persist after every change
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch {}
+  }, [data]);
 
   const addItem = (item: HomeworkItem) => {
     setData((prev) => [...prev, item]);
@@ -204,21 +227,25 @@ export default function HomeworkList({
     setData((prev) => prev.filter((it) => it.id !== id));
   };
 
-  const toggleStatus = (id: string) => {
+  const cycleStatus = (id: string) => {
     setData((prev) =>
-      prev.map((it) =>
-        it.id === id ? { ...it, status: it.status === "done" ? "todo" : "done" } : it
-      )
+      prev.map((it) => {
+        if (it.id !== id) return it;
+        const next: HomeworkStatus =
+          it.status === "todo" ? "in-progress" : it.status === "in-progress" ? "done" : "todo";
+        return { ...it, status: next };
+      })
     );
   };
 
-  const toggleExpand = (id: string) => {
-    setExpandedId((prev) => (prev === id ? null : id));
+  const parseLocalTime = (ymd: string) => {
+    const [y, m, d] = ymd.split("-").map(Number);
+    return new Date(y, (m ?? 1) - 1, d ?? 1).getTime();
   };
 
   const filteredSorted = useMemo(() => {
     const out = data.filter((it) => (statusFilter === "all" ? true : it.status === statusFilter));
-    return out.sort((a, b) => new Date(a.due).getTime() - new Date(b.due).getTime());
+    return out.sort((a, b) => parseLocalTime(a.due) - parseLocalTime(b.due));
   }, [data, statusFilter]);
 
   return (
@@ -252,8 +279,8 @@ export default function HomeworkList({
             <HomeworkCard
               item={hw}
               isExpanded={expandedId === hw.id}
-              onToggleExpand={toggleExpand}
-              onToggleStatus={toggleStatus}
+              onToggleExpand={(id) => setExpandedId((prev) => (prev === id ? null : id))}
+              onCycleStatus={cycleStatus}
               onRemove={removeItem}
             />
           </li>
