@@ -38,7 +38,7 @@ function HomeworkForm({ onAdd }: { onAdd: (item: HomeworkItem) => void }) {
       title,
       course,
       due,
-      status: "todo"
+      status: "todo",
     });
 
     setTitle("");
@@ -80,7 +80,7 @@ function HomeworkCard({
   isExpanded,
   onToggleExpand,
   onCycleStatus,
-  onRemove
+  onRemove,
 }: {
   item: HomeworkItem;
   isExpanded: boolean;
@@ -94,7 +94,7 @@ function HomeworkCard({
     return local.toLocaleDateString(undefined, {
       year: "numeric",
       month: "short",
-      day: "numeric"
+      day: "numeric",
     });
   };
 
@@ -125,6 +125,14 @@ function HomeworkCard({
             onClick={() => onCycleStatus(item.id)}
           >
             {statusActionLabel}
+          </button>
+
+          <button
+            type="button"
+            className="btn btn--ghost"
+            onClick={() => onToggleExpand(item.id)}
+          >
+            {isExpanded ? "Hide details" : "Show details"}
           </button>
 
           <button
@@ -170,7 +178,7 @@ function HomeworkCard({
 
 export default function HomeworkList({
   heading = "Assignments",
-  items
+  items,
 }: {
   heading?: string;
   items?: HomeworkItem[];
@@ -182,7 +190,7 @@ export default function HomeworkList({
       course: "COMP-4002",
       due: "2026-01-28",
       status: "in-progress",
-      estMins: 45
+      estMins: 45,
     },
     {
       id: "a2",
@@ -190,7 +198,7 @@ export default function HomeworkList({
       course: "COMP-4002",
       due: "2026-01-30",
       status: "todo",
-      estMins: 60
+      estMins: 60,
     },
     {
       id: "a3",
@@ -198,21 +206,20 @@ export default function HomeworkList({
       course: "COMP-4002",
       due: "2026-02-01",
       status: "todo",
-      estMins: 20
-    }
+      estMins: 20,
+    },
   ];
 
-  // 1) Initialize from localStorage on first render (preferred), then fall back.
   const [data, setData] = useState<HomeworkItem[]>(
-    () => safeParse<HomeworkItem[]>(typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null)
-      ?? items
-      ?? demoItems
+    () =>
+      safeParse<HomeworkItem[]>(
+        typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null
+      ) ?? items ?? demoItems
   );
 
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | HomeworkStatus>("all");
 
-  // 2) Persist after every change
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
