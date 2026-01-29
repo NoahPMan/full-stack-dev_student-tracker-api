@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { HomeworkItem } from "./HomeworkList";
+import type { HomeworkItem } from "./HomeworkList";
 
 export default function HomeworkForm({
   onAdd,
