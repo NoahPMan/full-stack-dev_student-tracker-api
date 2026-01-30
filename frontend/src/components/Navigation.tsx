@@ -25,6 +25,13 @@ export default function Navigation() {
             <span className="nav-text">Assignments</span>
           </NavLink>
         </li>
+
+        <li className="nav-item">
+          <NavLink to="/notes" className="nav-button">
+            <span className="nav-icon">🗒️</span>
+            <span className="nav-text">Notes</span>
+          </NavLink>
+        </li>
       </ul>
     </nav>
   );
