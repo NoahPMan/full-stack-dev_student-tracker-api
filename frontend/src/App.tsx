@@ -3,6 +3,7 @@ import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Courses from "./pages/Courses";
 import Assignments from "./pages/Assignments";
+import Notes from "./pages/Notes";
 import "./App.css";
 
 export default function App() {
@@ -12,6 +13,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/courses" element={<Courses />} />
         <Route path="/assignments" element={<Assignments />} />
+        <Route path="/notes" element={<Notes />} />
       </Routes>
     </Layout>
   );
