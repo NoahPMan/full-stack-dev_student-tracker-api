@@ -1,10 +1,30 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import NoteForm from "../components/notes/NoteForm";
 import type { Note } from "../components/notes/NoteForm";
 import NoteList from "../components/notes/NoteList";
+import type { SharedCourseProps } from "../App";
+import CourseSelector from "../components/CourseSelector";
 
-export default function Notes() {
-  const [notes, setNotes] = useState<Note[]>([]);
+const STORAGE_KEY = "student-tracker-notes";
+
+export default function Notes({ activeCourse, setActiveCourse }: SharedCourseProps) {
+  const [notes, setNotes] = useState<Note[]>(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw) as Note[];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+    } catch {
+    }
+  }, [notes]);
 
   const addNote = (note: Note) => {
     setNotes((prev) => [...prev, note]);
@@ -29,7 +49,19 @@ export default function Notes() {
   return (
     <div>
       <h2>Notes</h2>
-      <NoteForm onAdd={addNote} />
+
+      <div style={{ marginBottom: "1.5rem" }}>
+        <CourseSelector
+          activeCourse={activeCourse}
+          setActiveCourse={setActiveCourse}
+          showQuickButtons={true}
+        />
+      </div>
+
+      <div style={{ marginTop: "0.75rem" }}>
+        <NoteForm onAdd={addNote} />
+      </div>
+
       <NoteList notes={displayNotes} onRemove={removeNote} onTogglePin={togglePin} />
     </div>
   );

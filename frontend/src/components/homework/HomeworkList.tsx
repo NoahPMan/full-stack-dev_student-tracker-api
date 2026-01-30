@@ -190,7 +190,7 @@ export default function HomeworkList({
       course: "COMP-4002",
       due: "2026-01-28",
       status: "in-progress",
-      estMins: 45,
+      estMins: 30,
     },
     {
       id: "a2",
@@ -202,7 +202,7 @@ export default function HomeworkList({
     },
     {
       id: "a3",
-      title: "Run Axe DevTools on App",
+      title: "Run App on Vercel",
       course: "COMP-4002",
       due: "2026-02-01",
       status: "todo",
