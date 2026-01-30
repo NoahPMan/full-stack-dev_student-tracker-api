@@ -3,6 +3,7 @@ import { useState } from "react";
 export type Note = {
   id: string;
   text: string;
+  pinned?: boolean;
 };
 
 export default function NoteForm({
@@ -24,6 +25,7 @@ export default function NoteForm({
     onAdd({
       id: crypto.randomUUID(),
       text: text.trim(),
+      pinned: false,
     });
 
     setText("");
