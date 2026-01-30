@@ -28,7 +28,6 @@ export default function App() {
     try {
       localStorage.setItem(ACTIVE_COURSE_KEY, activeCourse);
     } catch {
-      // ignore write errors (quota, privacy mode)
     }
   }, [activeCourse]);
 
