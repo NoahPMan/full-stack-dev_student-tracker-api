@@ -1,7 +1,7 @@
 const Footer = () => {
   return (
     <footer className="layout-footer">
-      <p>© 2025 Code Trackers | Kaeden, Noah, Miniru</p>
+      <p>© 2026 Code Trackers | Kaeden, Noah, Adam</p>
     </footer>
   );
 };

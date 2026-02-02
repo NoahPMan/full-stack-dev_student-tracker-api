@@ -29,13 +29,38 @@ To be decided
 - Muniru Adam  
 - Kaeden Barta  
 
+## Sprint 1
+
+### Team Contributions
+
+**Project Setup and Foundation** — *Team*
+- **Project initialization with Vite + React + TypeScript** — *Adam*
+- **Folder structure setup (components/, pages/, context/, types/)** — *Team*
+- **README documentation** — *Team*
+
+**Layout and Navigation** — *Adam*
+- **Basic Layout component (Header, Main, Footer structure)** — *Adam*
+- **Navigation component with tab highlighting** — *Adam*
+
+**State Management** — *Adam*
+- **CourseContext with Context API** — *Kaeden*
+- **Shared state setup** — *Kaeden*
+
+**Additional Components** — *Kaeden*
+- **Footer component with team information** — *Kaeden*
+
+**Git Workflow** — *Team*
+- **Repository setup and branch protection** — *Noah/Team*
+- **Feature branch workflow implementation** — *Team*
+
+
 ---
 
 ## Sprint 2
 
 ### Team Contributions
-- **Multi-page navigation** — *Muniru*  
-- **Navigation bar design and integration** — *Muniru*  
+- **Multi-page navigation** — *Kaeden*  
+- **Navigation bar design and integration** — *Kaeden*  
 
 - **Shared application state across pages** — *Noah*  
 - **Reusable component development** — *Noah*  
@@ -45,6 +70,8 @@ To be decided
 - **Footer with team names** — *Kaeden*  
 - **Notes page development** — *Kaeden*  
 - **Added note creation, removal, and pinning functionality** — *Kaeden*
+
+- **Sprint review and and PR approval** - *Adam*
 
 ### Feature Pages
 Our feature pages were planned and built collaboratively, with all team members contributing to their development.
