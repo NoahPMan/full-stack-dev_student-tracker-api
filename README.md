@@ -36,13 +36,15 @@ To be decided
 ### Team Contributions
 - **Multi-page navigation** — *Muniru*  
 - **Navigation bar design and integration** — *Muniru*  
+
 - **Shared application state across pages** — *Noah*  
 - **Reusable component development** — *Noah*  
 - **Local storage for data persistence** — *Noah*  
 - **Desktop layout improvements and responsive fixes** — *Noah*  
+
 - **Footer with team names** — *Kaeden*  
-- **Notes page development** — *Kaeden*
-- ** adde and remove and pin notes in notes page ** Kaeden
+- **Notes page development** — *Kaeden*  
+- **Added note creation, removal, and pinning functionality** — *Kaeden*
 
 ### Feature Pages
 Our feature pages were planned and built collaboratively, with all team members contributing to their development.
