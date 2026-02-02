@@ -158,12 +158,6 @@ function HomeworkCard({
               <time dateTime={item.due}>{fmt(item.due)}</time>
             </dd>
           </div>
-          {typeof item.estMins === "number" && (
-            <div className="homework-meta__row">
-              <dt>Estimate</dt>
-              <dd>{item.estMins} mins</dd>
-            </div>
-          )}
         </dl>
       </div>
 
