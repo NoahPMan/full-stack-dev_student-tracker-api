@@ -102,11 +102,28 @@
   border-color: #c9d1da;
 }
 
+.btn--danger {
+  background: #dc3545;
+  color: #fff;
+  border-color: #c62f3d;
+}
+
+.btn:hover,
+.btn:focus {
+  filter: brightness(0.96);
+}
+
+.btn--ghost:hover,
+.btn--ghost:focus {
+  background: #eef3f8;
+}
+
 .homework-card__meta-row {
   margin-top: .5rem;
   display: flex;
   flex-wrap: wrap;
   gap: .75rem;
+  align-items: center;
 }
 
 .homework-meta {
@@ -128,26 +145,24 @@
 
 .badge {
   display: inline-block;
-  min-width: 88px;
-  text-align: center;
   font-size: .8rem;
-  padding: .15rem .45rem;
-  border-radius: 999px;
-  color: #fff;
   font-weight: 600;
+  color: #fff;
 }
 
-.badge--todo {
-  background: #6c757d;
+.homework-card .badge {
+  width: 72px;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 50%;
+  line-height: normal;
 }
 
-.badge--in-progress {
-  background: #ff7a00;
-}
-
-.badge--done {
-  background: #198754;
-}
+.badge--todo { background: #6c757d; }
+.badge--in-progress { background: #ff7a00; }
+.badge--done { background: #198754; }
 
 .homework-list__footer {
   margin-top: .8rem;
@@ -173,4 +188,66 @@
   padding: 0;
   min-width: 0;
   border-radius: 3px;
+}
+
+.hw-form {
+  display: grid;
+  grid-template-columns: 1fr 150px 160px auto;
+  gap: .5rem;
+  margin: .8rem 0 .9rem;
+  align-items: center;
+}
+
+.hw-form input[type="text"],
+.hw-form input[type="date"] {
+  border: 1px solid #c9d1da;
+  border-radius: 6px;
+  padding: .4rem .55rem;
+  font-size: .95rem;
+  background: #fff;
+  color: #18222c;
+}
+
+.hw-form input:focus {
+  outline: none;
+  border-color: #0F62FE;
+  box-shadow: 0 0 0 3px rgba(15, 98, 254, 0.15);
+}
+
+.hw-form button[type="submit"] {
+  background: #0F62FE;
+  color: #fff;
+  border: 1px solid #0F62FE;
+  border-radius: 6px;
+  padding: .45rem .8rem;
+  font-size: .9rem;
+  cursor: pointer;
+}
+
+.hw-form button[type="submit"]:hover,
+.hw-form button[type="submit"]:focus {
+  filter: brightness(0.95);
+}
+
+/* ----- Filters interaction polish ----- */
+.chip:hover,
+.chip:focus-visible {
+  border-color: #8aa4c2;
+}
+
+.chip:focus-visible {
+  outline: 2px solid #0F62FE;
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .hw-form {
+    grid-template-columns: 1fr;
+  }
+
+  .homework-list__header {
+    flex-direction: column;
+    gap: .2rem;
+    align-items: flex-start;
+  }
 }

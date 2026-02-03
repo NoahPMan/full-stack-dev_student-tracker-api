@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import "./HomeworkList.css";
 
 export type HomeworkStatus = "todo" | "in-progress" | "done";
@@ -13,31 +13,97 @@ export type HomeworkItem = {
   url?: string;
 };
 
-function StatusBadge({ status }: { status: HomeworkStatus }) {
+const STORAGE_KEY = "homeworkItems";
+
+function safeParse<T>(raw: string | null): T | null {
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+}
+
+function HomeworkForm({ onAdd }: { onAdd: (item: HomeworkItem) => void }) {
+  const [title, setTitle] = useState("");
+  const [course, setCourse] = useState("");
+  const [due, setDue] = useState("");
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim() || !course.trim() || !due.trim()) return;
+
+    onAdd({
+      id: crypto.randomUUID(),
+      title,
+      course,
+      due,
+      status: "todo",
+    });
+
+    setTitle("");
+    setCourse("");
+    setDue("");
+  };
+
   return (
-    <span className={`badge badge--${status}`}>
-      {status.replace("-", " ")}
-    </span>
+    <form className="hw-form" onSubmit={submit}>
+      <input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Homework title"
+        required
+      />
+      <input
+        value={course}
+        onChange={(e) => setCourse(e.target.value)}
+        placeholder="Course code"
+        required
+      />
+      <input
+        type="date"
+        value={due}
+        onChange={(e) => setDue(e.target.value)}
+        required
+      />
+      <button type="submit">Add</button>
+    </form>
   );
+}
+
+function StatusBadge({ status }: { status: HomeworkStatus }) {
+  return <span className={`badge badge--${status}`}>{status.replace("-", " ")}</span>;
 }
 
 function HomeworkCard({
   item,
   isExpanded,
   onToggleExpand,
-  onToggleStatus
+  onCycleStatus,
+  onRemove,
 }: {
   item: HomeworkItem;
   isExpanded: boolean;
   onToggleExpand: (id: string) => void;
-  onToggleStatus: (id: string) => void;
+  onCycleStatus: (id: string) => void;
+  onRemove: (id: string) => void;
 }) {
-  const fmt = (iso: string) =>
-    new Date(iso).toLocaleDateString(undefined, {
+  const fmt = (ymd: string) => {
+    const [y, m, d] = ymd.split("-").map(Number);
+    const local = new Date(y, (m ?? 1) - 1, d ?? 1);
+    return local.toLocaleDateString(undefined, {
       year: "numeric",
       month: "short",
-      day: "numeric"
+      day: "numeric",
     });
+  };
+
+  const statusActionLabel =
+    item.status === "todo"
+      ? "Start (In progress)"
+      : item.status === "in-progress"
+      ? "Mark Done"
+      : "Reopen (To do)";
 
   return (
     <article className="homework-card">
@@ -56,9 +122,9 @@ function HomeworkCard({
           <button
             type="button"
             className="btn btn--secondary"
-            onClick={() => onToggleStatus(item.id)}
+            onClick={() => onCycleStatus(item.id)}
           >
-            {item.status === "done" ? "Undo Done" : "Mark Done"}
+            {statusActionLabel}
           </button>
 
           <button
@@ -67,6 +133,14 @@ function HomeworkCard({
             onClick={() => onToggleExpand(item.id)}
           >
             {isExpanded ? "Hide details" : "Show details"}
+          </button>
+
+          <button
+            type="button"
+            className="btn btn--danger"
+            onClick={() => onRemove(item.id)}
+          >
+            Remove
           </button>
         </div>
       </div>
@@ -84,20 +158,12 @@ function HomeworkCard({
               <time dateTime={item.due}>{fmt(item.due)}</time>
             </dd>
           </div>
-          {typeof item.estMins === "number" && (
-            <div className="homework-meta__row">
-              <dt>Estimate</dt>
-              <dd>{item.estMins} mins</dd>
-            </div>
-          )}
         </dl>
       </div>
 
       {isExpanded && (
         <div className="homework-card__details">
-          <p className="hw-note">
-            Break this task into smaller steps for better workflow.
-          </p>
+          <p className="hw-note">Break this task into smaller steps for better workflow.</p>
         </div>
       )}
     </article>
@@ -106,7 +172,7 @@ function HomeworkCard({
 
 export default function HomeworkList({
   heading = "Assignments",
-  items
+  items,
 }: {
   heading?: string;
   items?: HomeworkItem[];
@@ -118,7 +184,7 @@ export default function HomeworkList({
       course: "COMP-4002",
       due: "2026-01-28",
       status: "in-progress",
-      estMins: 45
+      estMins: 30,
     },
     {
       id: "a2",
@@ -126,44 +192,61 @@ export default function HomeworkList({
       course: "COMP-4002",
       due: "2026-01-30",
       status: "todo",
-      estMins: 60
+      estMins: 60,
     },
     {
       id: "a3",
-      title: "Run Axe DevTools on App",
+      title: "Run App on Vercel",
       course: "COMP-4002",
       due: "2026-02-01",
       status: "todo",
-      estMins: 20
-    }
+      estMins: 20,
+    },
   ];
 
-  const [data, setData] = useState(items ?? demoItems);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] =
-    useState<"all" | HomeworkStatus>("all");
+  const [data, setData] = useState<HomeworkItem[]>(
+    () =>
+      safeParse<HomeworkItem[]>(
+        typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null
+      ) ?? items ?? demoItems
+  );
 
-  const toggleStatus = (id: string) => {
-    setData(prev =>
-      prev.map(it =>
-        it.id === id
-          ? { ...it, status: it.status === "done" ? "todo" : "done" }
-          : it
-      )
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<"all" | HomeworkStatus>("all");
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch {}
+  }, [data]);
+
+  const addItem = (item: HomeworkItem) => {
+    setData((prev) => [...prev, item]);
+  };
+
+  const removeItem = (id: string) => {
+    setData((prev) => prev.filter((it) => it.id !== id));
+  };
+
+  const cycleStatus = (id: string) => {
+    setData((prev) =>
+      prev.map((it) => {
+        if (it.id !== id) return it;
+        const next: HomeworkStatus =
+          it.status === "todo" ? "in-progress" : it.status === "in-progress" ? "done" : "todo";
+        return { ...it, status: next };
+      })
     );
   };
 
-  const toggleExpand = (id: string) => {
-    setExpandedId(prev => (prev === id ? null : id));
+  const parseLocalTime = (ymd: string) => {
+    const [y, m, d] = ymd.split("-").map(Number);
+    return new Date(y, (m ?? 1) - 1, d ?? 1).getTime();
   };
 
   const filteredSorted = useMemo(() => {
-    const out = data.filter(it =>
-      statusFilter === "all" ? true : it.status === statusFilter
-    );
-    return out.sort(
-      (a, b) => new Date(a.due).getTime() - new Date(b.due).getTime()
-    );
+    const out = data.filter((it) => (statusFilter === "all" ? true : it.status === statusFilter));
+    return out.sort((a, b) => parseLocalTime(a.due) - parseLocalTime(b.due));
   }, [data, statusFilter]);
 
   return (
@@ -171,18 +254,20 @@ export default function HomeworkList({
       <header className="homework-list__header">
         <h2>{heading}</h2>
         <p className="homework-list__summary">
-          {filteredSorted.length}{" "}
-          {filteredSorted.length === 1 ? "item" : "items"}
+          {filteredSorted.length} {filteredSorted.length === 1 ? "item" : "items"}
         </p>
       </header>
 
+      <HomeworkForm onAdd={addItem} />
+
       <div className="homework-list__toolbar">
-        {(["all", "todo", "in-progress", "done"] as const).map(opt => (
+        {(["all", "todo", "in-progress", "done"] as const).map((opt) => (
           <button
             key={opt}
             type="button"
             className={`chip ${statusFilter === opt ? "chip--active" : ""}`}
             onClick={() => setStatusFilter(opt)}
+            aria-pressed={statusFilter === opt}
           >
             {opt === "all" ? "All" : opt.replace("-", " ")}
           </button>
@@ -190,13 +275,14 @@ export default function HomeworkList({
       </div>
 
       <ol className="homework-list__items">
-        {filteredSorted.map(hw => (
+        {filteredSorted.map((hw) => (
           <li key={hw.id} className="homework-list__item">
             <HomeworkCard
               item={hw}
               isExpanded={expandedId === hw.id}
-              onToggleExpand={toggleExpand}
-              onToggleStatus={toggleStatus}
+              onToggleExpand={(id) => setExpandedId((prev) => (prev === id ? null : id))}
+              onCycleStatus={cycleStatus}
+              onRemove={removeItem}
             />
           </li>
         ))}
