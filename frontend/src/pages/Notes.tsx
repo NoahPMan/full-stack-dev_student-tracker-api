@@ -48,21 +48,22 @@ export default function Notes({ activeCourse, setActiveCourse }: SharedCoursePro
 
   return (
     <div>
-      <h2>Notes</h2>
+    <h2>Notes </h2>
 
-      <div style={{ marginBottom: "1.5rem" }}>
-        <CourseSelector
-          activeCourse={activeCourse}
-          setActiveCourse={setActiveCourse}
-          showQuickButtons={true}
-        />
+    < div style = {{ marginBottom: "1.5rem" }
+}>
+  <CourseSelector
+          activeCourse={ activeCourse }
+setActiveCourse = { setActiveCourse }
+showQuickButtons = { true}
+  />
+  </div>
+
+  < div style = {{ marginTop: "0.75rem" }}>
+    <NoteForm onAdd={ addNote } />
       </div>
 
-      <div style={{ marginTop: "0.75rem" }}>
-        <NoteForm onAdd={addNote} />
-      </div>
-
-      <NoteList notes={displayNotes} onRemove={removeNote} onTogglePin={togglePin} />
-    </div>
+      < NoteList notes = { displayNotes } onRemove = { removeNote } onTogglePin = { togglePin } />
+        </div>
   );
 }

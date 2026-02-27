@@ -41,15 +41,16 @@ export default function NoteForm({
   };
 
   return (
-    <form onSubmit={submit}>
-      <input
-        value={text}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="Enter note"
-      />
-      <button type="submit">Add</button>
+    <form onSubmit= { submit } >
+    <input
+        value={ text }
+  onChange = {(e) => onChange(e.target.value)
+}
+placeholder = "Enter note"
+  />
+  <button type="submit" > Add </button>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-    </form>
+{ error && <p style={ { color: "red" } }> { error } </p> }
+</form>
   );
 }

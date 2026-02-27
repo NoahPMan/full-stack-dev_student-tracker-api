@@ -28,27 +28,28 @@ export default function HomeworkForm({
   };
 
   return (
-    <form className="hw-form" onSubmit={submit}>
+    <form className= "hw-form" onSubmit = { submit } >
       <input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Homework title"
-        required
-      />
-      <input
-        value={course}
-        onChange={(e) => setCourse(e.target.value)}
-        placeholder="Course code"
-        required
-      />
-      <input
+        value={ title }
+  onChange = {(e) => setTitle(e.target.value)
+}
+placeholder = "Homework title"
+required
+  />
+  <input
+        value={ course }
+onChange = {(e) => setCourse(e.target.value)}
+placeholder = "Course code"
+required
+  />
+  <input
         type="date"
-        value={due}
-        onChange={(e) => setDue(e.target.value)}
-        required
-      />
+value = { due }
+onChange = {(e) => setDue(e.target.value)}
+required
+  />
 
-      <button type="submit">Add</button>
+  <button type="submit" > Add </button>
     </form>
   );
 }

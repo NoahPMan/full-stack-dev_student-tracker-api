@@ -4,14 +4,14 @@ import CourseSelector from "../components/CourseSelector";
 export default function Courses({ activeCourse, setActiveCourse }: SharedCourseProps) {
   return (
     <>
-      <h2>Courses</h2>
-      <p>Your enrolled courses will appear here.</p>
+    <h2>Courses </h2>
+    < p > Your enrolled courses will appear here.</p>
 
-      <CourseSelector
-        activeCourse={activeCourse}
-        setActiveCourse={setActiveCourse}
-        showQuickButtons={true}
-      />
+      < CourseSelector
+  activeCourse = { activeCourse }
+  setActiveCourse = { setActiveCourse }
+  showQuickButtons = { true}
+    />
     </>
   );
 }

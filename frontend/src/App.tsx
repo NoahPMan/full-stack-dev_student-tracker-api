@@ -33,24 +33,24 @@ export default function App() {
 
   return (
     <Layout>
-      <Routes>
-        <Route
-          path="/"
-          element={<Home activeCourse={activeCourse} setActiveCourse={setActiveCourse} />}
+    <Routes>
+    <Route
+          path= "/"
+  element = {< Home activeCourse = { activeCourse } setActiveCourse = { setActiveCourse } />}
         />
-        <Route
-          path="/courses"
-          element={<Courses activeCourse={activeCourse} setActiveCourse={setActiveCourse} />}
+  < Route
+path = "/courses"
+element = {< Courses activeCourse = { activeCourse } setActiveCourse = { setActiveCourse } />}
         />
-        <Route
-          path="/assignments"
-          element={<Assignments activeCourse={activeCourse} setActiveCourse={setActiveCourse} />}
+  < Route
+path = "/assignments"
+element = {< Assignments activeCourse = { activeCourse } setActiveCourse = { setActiveCourse } />}
         />
-        <Route
-          path="/notes"
-          element={<Notes activeCourse={activeCourse} setActiveCourse={setActiveCourse} />}
+  < Route
+path = "/notes"
+element = {< Notes activeCourse = { activeCourse } setActiveCourse = { setActiveCourse } />}
         />
-      </Routes>
-    </Layout>
+  </Routes>
+  </Layout>
   );
 }

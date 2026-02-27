@@ -1,4 +1,4 @@
-# Style Guide – Student Tracker Application
+# Style Guide - Student Tracker Application
 This document outlines the visual styles for the Student Tracker application.
 
 ## Colour Palette
