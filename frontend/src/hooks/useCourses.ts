@@ -22,23 +22,16 @@ export const useCourses = () => {
     }
   }, []);
 
-  /**
-   * Load courses on mount
-   */
   useEffect(() => {
     loadCourses();
   }, [loadCourses]);
 
-  /**
-   * Create a new course
-   */
   const createCourse = useCallback(async (courseData: CreateCourseDto): Promise<Course | null> => {
     try {
       setError(null);
       
       const newCourse = await courseService.createCourse(courseData);
       
-      // Presentation logic: Update UI immediately
       setCourses(prev => [...prev, newCourse].sort((a, b) => a.code.localeCompare(b.code)));
       
       return newCourse;
@@ -49,9 +42,6 @@ export const useCourses = () => {
     }
   }, []);
 
-  /**
-   * Update an existing course
-   */
   const updateCourse = useCallback(async (id: string, updates: UpdateCourseDto): Promise<Course | null> => {
     try {
       setError(null);
@@ -59,7 +49,6 @@ export const useCourses = () => {
       const updatedCourse = await courseService.updateCourse(id, updates);
       
       if (updatedCourse) {
-        // Presentation logic: Update UI immediately
         setCourses(prev =>
           prev.map(course => course.id === id ? updatedCourse : course)
         );
@@ -73,9 +62,6 @@ export const useCourses = () => {
     }
   }, []);
 
-  /**
-   * Delete a course
-   */
   const deleteCourse = useCallback(async (id: string): Promise<boolean> => {
     try {
       setError(null);
@@ -83,7 +69,6 @@ export const useCourses = () => {
       const success = await courseService.deleteCourse(id);
       
       if (success) {
-        // Presentation logic: Update UI immediately
         setCourses(prev => prev.filter(course => course.id !== id));
       }
       
@@ -95,9 +80,6 @@ export const useCourses = () => {
     }
   }, []);
 
-  /**
-   * Search courses
-   */
   const searchCourses = useCallback(async (query: string): Promise<Course[]> => {
     try {
       setError(null);
@@ -116,9 +98,6 @@ export const useCourses = () => {
     }
   }, []);
 
-  /**
-   * Refresh courses (reload from service)
-   */
   const refreshCourses = useCallback(async () => {
     await loadCourses();
   }, [loadCourses]);
