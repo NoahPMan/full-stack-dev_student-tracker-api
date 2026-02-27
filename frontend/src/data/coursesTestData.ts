@@ -7,7 +7,7 @@ export const coursesTestData: Course[] = [
     name: 'Full-Stack Development',
     credits: 3,
     instructor: 'Prof. Michael Bialowas',
-    semester: 'Fall 2025',
+    semester: 'Winter 2025',
     description: 'Learn to build complete web applications using modern frameworks'
   },
   {
