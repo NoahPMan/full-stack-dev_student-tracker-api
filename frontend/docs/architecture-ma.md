@@ -74,18 +74,14 @@ The `CourseService` handles all business logic related to courses:
 
 **Decision Process:**
 
-I included logic that represents **business rules** and **domain knowledge**:
-- Validation rules (course codes must match a specific format)
+I included logic that represents *business rules* and *domain knowledge*:
+- Validation rules that make sure course codes must match a specific format
 - Business constraints (credits must be 1-6, no duplicate codes)
 - Data transformations (sorting, filtering, calculations)
 
-I specifically **excluded**:
-- UI concerns (loading states, error display) - handled by useCourses hook
-- Data access (fetch, save, delete operations) - handled by CourseRepository
-
 **Separation of Concerns:**
 
-- **What it does:** Validates, transforms, and enforces business rules
+- **What it does:** Validates and transforms business rules
 - **What it doesn't do:** Doesn't know WHERE data comes from (repository) or HOW it's displayed (hook/component)
 - **Why:** Business logic changes independently of data sources or UI. For example, if validation rules change, 
 we only update the service.
@@ -97,7 +93,7 @@ we only update the service.
 **Used in:**
 - `src/hooks/useCourses.ts` - Called by the hook to enforce business logic
 
-**Example Usage:**
+**Example**
 ```tsx
 // Hook calls service methods
 const courses = await courseService.getAllCourses();  // Returns sorted courses
@@ -148,9 +144,9 @@ I specifically **excluded**:
 **Used in:**
 - `src/services/CourseService.ts` - Service calls repository methods
 
-**Example Usage:**
+**Example**
 ```tsx
-// Service calls repository (component/hook never calls repository directly)
+// Service calls repository
 const courses = await courseRepository.getAll();
 const newCourse = await courseRepository.create(courseData);
 ```
@@ -161,50 +157,3 @@ Component → useCourses Hook → CourseService → CourseRepository → Test Da
 ```
 
 The repository is the **only** place that knows about data storage. This makes it easy to switch from test data to a real database or API without changing any other code.
-
----
-
-## Architecture Benefits
-
-This three-layer architecture provides:
-
-1. **Testability:** Each layer can be tested independently
-2. **Maintainability:** Changes in one layer don't affect others
-3. **Reusability:** Hook can be used in multiple components
-4. **Flexibility:** Easy to swap data sources (test data → API → database)
-5. **Clarity:** Clear separation of responsibilities makes code easier to understand
-
----
-
-## Test Data
-
-**Location:** `src/data/coursesTestData.ts`
-
-**Contains:** 11 pre-defined course objects with realistic data
-
-**Purpose:**
-- Simulates database data for development
-- Will be replaced with real API calls in next module
-- Allows front-end development without needing a back-end
-
-**Example:**
-```tsx
-{
-  id: '1',
-  code: 'COMP-4002',
-  name: 'Full-Stack Development',
-  credits: 3,
-  instructor: 'Prof. Anderson',
-  semester: 'Fall 2025'
-}
-```
-
----
-
-## Future Enhancements
-
-In the next module, we will:
-1. Replace `CourseRepository` test data with real API calls
-2. Add authentication to service methods
-3. Implement caching in the repository
-4. Add more sophisticated error handling
