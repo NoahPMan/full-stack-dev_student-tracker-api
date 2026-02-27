@@ -5,4 +5,8 @@ export interface Course {
   credits: number;
   instructor?: string;
   semester?: string;
+  description?: string;
 }
+
+export type CreateCourseDto = Omit<Course, 'id'>;
+export type UpdateCourseDto = Partial<CreateCourseDto>;
