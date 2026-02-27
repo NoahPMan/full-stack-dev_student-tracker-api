@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import useFormField from "../../hooks/useFormField";
 import "./HomeworkList.css";
 
 export type HomeworkStatus = "todo" | "in-progress" | "done";
@@ -25,45 +26,45 @@ function safeParse<T>(raw: string | null): T | null {
 }
 
 function HomeworkForm({ onAdd }: { onAdd: (item: HomeworkItem) => void }) {
-  const [title, setTitle] = useState("");
-  const [course, setCourse] = useState("");
-  const [due, setDue] = useState("");
+  const title = useFormField("");
+  const course = useFormField("");
+  const due = useFormField("");
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !course.trim() || !due.trim()) return;
+    if (!title.value.trim() || !course.value.trim() || !due.value.trim()) return;
 
     onAdd({
       id: crypto.randomUUID(),
-      title,
-      course,
-      due,
+      title: title.value,
+      course: course.value,
+      due: due.value,
       status: "todo",
     });
 
-    setTitle("");
-    setCourse("");
-    setDue("");
+    title.reset();
+    course.reset();
+    due.reset();
   };
 
   return (
     <form className="hw-form" onSubmit={submit}>
       <input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        value={title.value}
+        onChange={(e) => title.onChange(e.target.value)}
         placeholder="Homework title"
         required
       />
       <input
-        value={course}
-        onChange={(e) => setCourse(e.target.value)}
+        value={course.value}
+        onChange={(e) => course.onChange(e.target.value)}
         placeholder="Course code"
         required
       />
       <input
         type="date"
-        value={due}
-        onChange={(e) => setDue(e.target.value)}
+        value={due.value}
+        onChange={(e) => due.onChange(e.target.value)}
         required
       />
       <button type="submit">Add</button>
