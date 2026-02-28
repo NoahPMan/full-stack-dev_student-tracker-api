@@ -45,7 +45,9 @@
   font-size: 1rem;
   font-weight: 600;
 
-  transition: background-color 0.2s, color 0.2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
   border-bottom: 3px solid transparent;
 
   white-space: nowrap;

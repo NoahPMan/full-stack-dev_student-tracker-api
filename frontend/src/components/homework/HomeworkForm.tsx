@@ -7,7 +7,7 @@ export default function HomeworkForm({ onAdd }: { onAdd: (item: HomeworkItem) =>
   const course = useFormField("");
   const due = useFormField("");
 
-  const submit = (e: React.FormEvent<HTMLFormElement>) => {
+  const submit = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!title.value.trim() || !course.value.trim() || !due.value.trim()) return;
 

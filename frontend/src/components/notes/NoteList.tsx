@@ -11,17 +11,19 @@ export default function NoteList({
 }) {
   return (
     <ul>
-      {notes.map((note) => (
-        <li key={note.id}>
-          {note.text}{" "}
-          <button type="button" onClick={() => onTogglePin(note.id)}>
-            {note.pinned ? "Unpin" : "Pin"}
-          </button>{" "}
-          <button type="button" onClick={() => onRemove(note.id)}>
-            Remove
-          </button>
-        </li>
+    {
+      notes.map((note) => (
+        <li key= { note.id } >
+        { note.text }{ " "}
+      < button type = "button" onClick = {() => onTogglePin(note.id)} >
+    { note.pinned ? "Unpin" : "Pin" }
+    </button>{" "}
+    < button type = "button" onClick = {() => onRemove(note.id)
+}>
+  Remove
+  </button>
+  </li>
       ))}
-    </ul>
+</ul>
   );
 }

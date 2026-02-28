@@ -11,7 +11,7 @@ export default function NoteForm({ onAdd }: { onAdd: (note: Note) => void }) {
   const text = useFormField("");
   const [error, setError] = useState("");
 
-  const submit = (e: React.FormEvent) => {
+  const submit = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!text.value.trim()) {

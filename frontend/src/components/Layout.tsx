@@ -9,17 +9,17 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="layout">
-      <header className="layout-header">
-        <h1>Student Tracker Application</h1>
-      </header>
+    <div className= "layout" >
+    <header className="layout-header" >
+      <h1>Student Tracker Application </h1>
+        </header>
 
-      <Navigation />
+        < Navigation />
 
-      <main className="layout-main">{children}</main>
+        <main className="layout-main" > { children } </main>
 
-      <Footer />
-    </div>
+          < Footer />
+          </div>
   );
 };
 
