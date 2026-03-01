@@ -1,4 +1,5 @@
 import { useState } from "react";
+import useFormField from "../../hooks/useFormField";
 
 export type Note = {
   id: string;
@@ -6,34 +7,30 @@ export type Note = {
   pinned?: boolean;
 };
 
-export default function NoteForm({
-  onAdd,
-}: {
-  onAdd: (note: Note) => void;
-}) {
-  const [text, setText] = useState("");
+export default function NoteForm({ onAdd }: { onAdd: (note: Note) => void }) {
+  const text = useFormField("");
   const [error, setError] = useState("");
 
-  const submit = (e: React.FormEvent) => {
+  const submit = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!text.trim()) {
+    if (!text.value.trim()) {
       setError("Please enter a note before adding.");
       return;
     }
 
     onAdd({
       id: crypto.randomUUID(),
-      text: text.trim(),
+      text: text.value.trim(),
       pinned: false,
     });
 
-    setText("");
+    text.reset();
     setError("");
   };
 
-  const onChange = (value: string) => {
-    setText(value);
+  const handleChange = (value: string) => {
+    text.onChange(value);
 
     if (value.trim()) {
       setError("");
@@ -43,8 +40,8 @@ export default function NoteForm({
   return (
     <form onSubmit={submit}>
       <input
-        value={text}
-        onChange={(e) => onChange(e.target.value)}
+        value={text.value}
+        onChange={(e) => handleChange(e.target.value)}
         placeholder="Enter note"
       />
       <button type="submit">Add</button>

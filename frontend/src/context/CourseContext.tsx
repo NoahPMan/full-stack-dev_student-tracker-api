@@ -47,8 +47,9 @@ export const CourseProvider: React.FC<CourseProviderProps> = ({ children }) => {
   };
 
   return (
-    <CourseContext.Provider value={{ courses, addCourse, deleteCourse, updateCourse }}>
-      {children}
-    </CourseContext.Provider>
+    <CourseContext.Provider value= {{ courses, addCourse, deleteCourse, updateCourse }
+}>
+  { children }
+  </CourseContext.Provider>
   );
 };
