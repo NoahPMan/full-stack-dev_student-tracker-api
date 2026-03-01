@@ -37,6 +37,8 @@ To be decided
 - Muniru Adam
 - Kaeden Barta
 
+---
+
 ## Sprint 1
 
 ### Team Contributions
@@ -89,3 +91,9 @@ To be decided
 ### Feature Pages
 
 Our feature pages were planned and built collaboratively, with all team members contributing to their development.
+
+---
+
+## Sprint 3
+
+### Team Contributions
