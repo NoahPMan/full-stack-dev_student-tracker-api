@@ -1,52 +1,46 @@
-import { useState } from "react";
-import useFormField from "../../hooks/useFormField";
+import { useState } from 'react';
+import type { FormEvent } from 'react';
+import { useCourse } from '../../context/CourseContext';
+import type { Note } from '../../types/Note';
 
-export type Note = {
-  id: string;
-  text: string;
-  pinned?: boolean;
-};
+type Props = { onAdd: (note: Note) => void };
 
-export default function NoteForm({ onAdd }: { onAdd: (note: Note) => void }) {
-  const text = useFormField("");
-  const [error, setError] = useState("");
+export default function NoteForm({ onAdd }: Props) {
+  const [text, setText] = useState('');
+  const { selectedCourseId } = useCourse();
 
-  const submit = (e: React.SyntheticEvent<HTMLFormElement>) => {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    const t = text.trim();
+    if (!t) return;
 
-    if (!text.value.trim()) {
-      setError("Please enter a note before adding.");
+    if (!selectedCourseId) {
+      alert('Select a course (top of page) before adding a note.');
       return;
     }
 
-    onAdd({
+    const note: Note = {
       id: crypto.randomUUID(),
-      text: text.value.trim(),
+      courseId: selectedCourseId,
+      title: t,
+      body: '',
       pinned: false,
-    });
-
-    text.reset();
-    setError("");
-  };
-
-  const handleChange = (value: string) => {
-    text.onChange(value);
-
-    if (value.trim()) {
-      setError("");
-    }
-  };
+      createdAt: new Date().toISOString(),
+    };
+    onAdd(note);
+    setText('');
+  }
 
   return (
-    <form onSubmit={submit}>
-      <input
-        value={text.value}
-        onChange={(e) => handleChange(e.target.value)}
+    <form onSubmit= { handleSubmit } style = {{ display: 'flex', gap: 8 }
+}>
+  <input
         placeholder="Enter note"
-      />
-      <button type="submit">Add</button>
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
+value = { text }
+onChange = {(e) => setText(e.target.value)}
+required
+  />
+  <button type="submit" > Add </button>
     </form>
   );
 }

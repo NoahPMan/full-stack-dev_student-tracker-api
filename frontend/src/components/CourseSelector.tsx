@@ -1,19 +1,12 @@
-import "./CourseSelector.css";
+// src/components/CourseSelector.tsx
+import './CourseSelector.css';
+import { useCourse } from '../context/CourseContext';
 
-type Props = {
-  activeCourse: string;
-  setActiveCourse: (value: string) => void;
-  showQuickButtons?: boolean;
-};
-
-export default function CourseSelector({
-  activeCourse,
-  setActiveCourse,
-  showQuickButtons = true,
-}: Props) {
-  const hasSelectedCourse = activeCourse !== "None";
-
-  const courses = ["Web Dev", "Databases", "Networking"];
+export default function CourseSelector({ showQuickButtons = true }: { showQuickButtons?: boolean }) {
+  const { selectedCourseId, setSelectedCourseId } = useCourse();
+  const activeCourse = selectedCourseId ?? 'None';
+  const hasSelectedCourse = activeCourse !== 'None';
+  const courses = ['Web Dev', 'Databases', 'Networking'];
 
   return (
     <section className="course-selector">
@@ -25,7 +18,7 @@ export default function CourseSelector({
         <button
           type="button"
           className="course-clear"
-          onClick={() => setActiveCourse("None")}
+          onClick={() => setSelectedCourseId(undefined)}
         >
           Clear
         </button>
@@ -35,13 +28,12 @@ export default function CourseSelector({
         <div className="course-buttons">
           {courses.map((course) => {
             const isActive = activeCourse === course;
-
             return (
               <button
                 key={course}
                 type="button"
-                className={`course-button${isActive ? " active" : ""}`}
-                onClick={() => setActiveCourse(course)}
+                className={`course-button${isActive ? ' active' : ''}`}
+                onClick={() => setSelectedCourseId(course)}
                 aria-pressed={isActive}
                 disabled={isActive}
               >
