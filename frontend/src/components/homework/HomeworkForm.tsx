@@ -2,11 +2,16 @@ import type React from "react";
 import useFormField from "../../hooks/useFormField";
 import type { HomeworkItem } from "./HomeworkList";
 
+/**
+ * Form component for creating homework items.
+ * Demonstrates reuse of the useFormField hook across multiple inputs.
+ */
 export default function HomeworkForm({ onAdd }: { onAdd: (item: HomeworkItem) => void }) {
   const title = useFormField("");
   const course = useFormField("");
   const due = useFormField("");
 
+  // Handles submission and simple empty-field validation
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!title.value.trim() || !course.value.trim() || !due.value.trim()) return;

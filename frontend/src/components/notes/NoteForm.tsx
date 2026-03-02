@@ -7,10 +7,15 @@ export type Note = {
   pinned?: boolean;
 };
 
+/**
+ * Form component for creating notes.
+ * Uses the reusable useFormField hook for input state.
+ */
 export default function NoteForm({ onAdd }: { onAdd: (note: Note) => void }) {
   const text = useFormField("");
   const [error, setError] = useState("");
 
+  // Handles note submission and basic validation
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -29,6 +34,7 @@ export default function NoteForm({ onAdd }: { onAdd: (note: Note) => void }) {
     setError("");
   };
 
+  // Clears error once user starts typing valid input
   const handleChange = (value: string) => {
     text.onChange(value);
 
