@@ -160,9 +160,17 @@
   line-height: normal;
 }
 
-.badge--todo { background: #6c757d; }
-.badge--in-progress { background: #ff7a00; }
-.badge--done { background: #198754; }
+.badge--todo {
+  background: #6c757d;
+}
+
+.badge--in-progress {
+  background: #ff7a00;
+}
+
+.badge--done {
+  background: #198754;
+}
 
 .homework-list__footer {
   margin-top: .8rem;

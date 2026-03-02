@@ -1,21 +1,14 @@
-import type { SharedCourseProps } from "../App";
-import CourseSelector from "../components/CourseSelector";
-import HomeworkList from "../components/homework/HomeworkList";
+// src/pages/Assignments.tsx
+import CourseSelector from '../components/CourseSelector';
+import HomeworkList from '../components/homework/HomeworkList';
 
-export default function Assignments({ activeCourse, setActiveCourse }: SharedCourseProps) {
+export default function Assignments() {
   return (
     <>
-      <h2>Assignments</h2>
-
-      <CourseSelector
-        activeCourse={activeCourse}
-        setActiveCourse={setActiveCourse}
-        showQuickButtons={true}
-      />
-
+    <h2>Assignments </h2>
+    < CourseSelector showQuickButtons = { true} />
       <hr />
-
-      <HomeworkList />
-    </>
+      < HomeworkList />
+      </>
   );
 }
