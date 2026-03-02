@@ -1,3 +1,4 @@
+// I.3 Chain: Repository (data) → in‑memory test data (homework.testdata.ts)
 import type { Repository } from './baseRepository';
 import type { Homework } from '../types/Homework';
 import { homeworkTestData } from '../data/homework.testdata';

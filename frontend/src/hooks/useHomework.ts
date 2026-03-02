@@ -1,3 +1,4 @@
+// I.3 Chain: Hook (presentation) → homeworkService (business) → homeworkRepository (data)
 import { useEffect, useMemo, useState } from 'react';
 import type { Homework } from '../types/Homework';
 import {

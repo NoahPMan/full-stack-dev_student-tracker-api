@@ -1,3 +1,4 @@
+// I.3 Chain: Hook (presentation) → homeworkService (business) → homeworkRepository (data)
 import { useEffect, useState } from 'react';
 import { fetchAllHomework } from '../services/homeworkService';
 
