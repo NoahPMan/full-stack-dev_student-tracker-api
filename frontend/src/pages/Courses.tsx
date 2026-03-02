@@ -1,4 +1,3 @@
-// src/pages/Courses.tsx
 import CourseSelector from '../components/CourseSelector';
 import { useCourse } from '../context/CourseContext';
 
