@@ -1,55 +1,45 @@
-import React, { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import type { Course } from '../types/Course';
 
-interface CourseContextType {
-  courses: Course[];
-  addCourse: (course: Omit<Course, 'id'>) => void;
-  deleteCourse: (id: string) => void;
-  updateCourse: (id: string, updates: Partial<Course>) => void;
-}
+const ACTIVE_COURSE_KEY = 'student-tracker-active-course';
 
-const CourseContext = createContext<CourseContextType | undefined>(undefined);
-
-export const useCourses = () => {
-  const context = useContext(CourseContext);
-  if (!context) {
-    throw new Error('useCourses must be used within CourseProvider');
-  }
-  return context;
+type CourseUIState = {
+  selectedCourseId?: string;
+  setSelectedCourseId: (id?: string) => void;
 };
 
-interface CourseProviderProps {
-  children: ReactNode;
-}
+const CourseContext = createContext<CourseUIState | undefined>(undefined);
 
-export const CourseProvider: React.FC<CourseProviderProps> = ({ children }) => {
-  const [courses, setCourses] = useState<Course[]>([]);
+export function CourseProvider({ children }: { children: ReactNode }) {
+  const [selectedCourseId, setSelectedCourseId] = useState<string | undefined>(() => {
+    try {
+      const saved = localStorage.getItem(ACTIVE_COURSE_KEY);
+      return saved && saved.trim().length > 0 ? saved : undefined;
+    } catch {
+      return undefined;
+    }
+  });
 
-  const addCourse = (courseData: Omit<Course, 'id'>) => {
-    const newCourse: Course = {
-      ...courseData,
-      id: Date.now().toString()
-    };
-    setCourses(prev => [...prev, newCourse]);
-  };
-
-  const deleteCourse = (id: string) => {
-    setCourses(prev => prev.filter(course => course.id !== id));
-  };
-
-  const updateCourse = (id: string, updates: Partial<Course>) => {
-    setCourses(prev =>
-      prev.map(course =>
-        course.id === id ? { ...course, ...updates } : course
-      )
-    );
-  };
+  useEffect(() => {
+    try {
+      if (selectedCourseId && selectedCourseId.length > 0) {
+        localStorage.setItem(ACTIVE_COURSE_KEY, selectedCourseId);
+      } else {
+        localStorage.removeItem(ACTIVE_COURSE_KEY);
+      }
+    } catch { }
+  }, [selectedCourseId]);
 
   return (
-    <CourseContext.Provider value= {{ courses, addCourse, deleteCourse, updateCourse }
+    <CourseContext.Provider value= {{ selectedCourseId, setSelectedCourseId }
 }>
   { children }
   </CourseContext.Provider>
   );
-};
+}
+
+export function useCourse() {
+  const ctx = useContext(CourseContext);
+  if (!ctx) throw new Error('useCourse must be used within a CourseProvider');
+  return ctx;
+}

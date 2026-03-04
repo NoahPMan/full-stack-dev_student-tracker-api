@@ -1,28 +1,29 @@
-import { useEffect, useMemo, useState } from "react";
-import type { Homework } from "../types/Homework";
+// I.3 Chain: Hook (presentation) → homeworkService (business) → homeworkRepository (data)
+import { useEffect, useMemo, useState } from 'react';
+import type { Homework } from '../types/Homework';
 import {
     addHomework,
     fetchAllHomework,
     filterSortHomework,
     removeHomework,
     setStatus,
-} from "../services/homeworkService";
+} from '../services/homeworkService';
 
 export function useHomework(
     initial: {
         courseId?: string;
-        status?: "all" | "todo" | "in-progress" | "done";
+        status?: 'all' | 'todo' | 'in-progress' | 'done';
         q?: string;
-        sort?: "dueDate" | "createdAt";
-    } = { status: "all", sort: "dueDate" },
+        sort?: 'dueDate' | 'createdAt';
+    } = { status: 'all', sort: 'dueDate' },
 ) {
     const [all, setAll] = useState<Homework[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | undefined>(undefined);
     const [courseId, setCourseId] = useState(initial.courseId);
-    const [status, setStatusFilter] = useState(initial.status ?? "all");
-    const [q, setQ] = useState(initial.q ?? "");
-    const [sort, setSort] = useState(initial.sort ?? "dueDate");
+    const [status, setStatusFilter] = useState(initial.status ?? 'all');
+    const [q, setQ] = useState(initial.q ?? '');
+    const [sort, setSort] = useState(initial.sort ?? 'dueDate');
 
     useEffect(() => {
         let cancelled = false;
@@ -33,7 +34,7 @@ export function useHomework(
                 const items = await fetchAllHomework();
                 if (!cancelled) setAll(items);
             } catch {
-                if (!cancelled) setError("Failed to load assignments");
+                if (!cancelled) setError('Failed to load assignments');
             } finally {
                 if (!cancelled) setLoading(false);
             }
@@ -48,6 +49,10 @@ export function useHomework(
         [all, courseId, status, q, sort],
     );
 
+    async function refresh() {
+        setAll(await fetchAllHomework());
+    }
+
     const actions = {
         setCourseId,
         setStatusFilter,
@@ -55,27 +60,29 @@ export function useHomework(
         setSort,
 
         async toTodo(id: string) {
-            await setStatus(id, "todo");
-            setAll(await fetchAllHomework());
+            await setStatus(id, 'todo');
+            await refresh();
         },
         async toInProgress(id: string) {
-            await setStatus(id, "in-progress");
-            setAll(await fetchAllHomework());
+            await setStatus(id, 'in-progress');
+            await refresh();
         },
         async toDone(id: string) {
-            await setStatus(id, "done");
-            setAll(await fetchAllHomework());
+            await setStatus(id, 'done');
+            await refresh();
         },
 
-        async add(input: Omit<Homework, "id" | "createdAt">) {
+        async add(input: Omit<Homework, 'id' | 'createdAt'>) {
             await addHomework(input);
-            setAll(await fetchAllHomework());
+            await refresh();
         },
 
         async remove(id: string) {
             await removeHomework(id);
-            setAll(await fetchAllHomework());
+            await refresh();
         },
+
+        refresh,
     };
 
     return {
@@ -90,3 +97,5 @@ export function useHomework(
         ...actions,
     };
 }
+
+export type UseHomeworkApi = ReturnType<typeof useHomework>;

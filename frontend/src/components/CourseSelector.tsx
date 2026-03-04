@@ -1,31 +1,34 @@
-import "./CourseSelector.css";
+import './CourseSelector.css';
+import { useCourse } from '../context/CourseContext';
 
-type Props = {
-  activeCourse: string;
-  setActiveCourse: (value: string) => void;
-  showQuickButtons?: boolean;
-};
+export default function CourseSelector({ showQuickButtons = true }: { showQuickButtons?: boolean }) {
+  const { selectedCourseId, setSelectedCourseId } = useCourse();
 
-export default function CourseSelector({
-  activeCourse,
-  setActiveCourse,
-  showQuickButtons = true,
-}: Props) {
-  const hasSelectedCourse = activeCourse !== "None";
+  // Map course IDs to display names
+  const courses = [
+    { id: 'c101', label: 'Web Dev' },
+    { id: 'c102', label: 'Databases' },
+    { id: 'c103', label: 'Networking' },
+    { id: 'c104', label: 'Software Architecture' },
+  ];
 
-  const courses = ["Web Dev", "Databases", "Networking"];
+  const activeCourse = selectedCourseId;
+  const activeLabel =
+    courses.find((c) => c.id === activeCourse)?.label ?? 'None';
+
+  const hasSelectedCourse = !!activeCourse;
 
   return (
     <section className="course-selector">
       <p className="course-label">
-        <strong>Active Course:</strong> {activeCourse}
+        <strong>Active Course:</strong> {activeLabel}
       </p>
 
       {hasSelectedCourse && (
         <button
           type="button"
           className="course-clear"
-          onClick={() => setActiveCourse("None")}
+          onClick={() => setSelectedCourseId(undefined)}
         >
           Clear
         </button>
@@ -34,18 +37,18 @@ export default function CourseSelector({
       {showQuickButtons && (
         <div className="course-buttons">
           {courses.map((course) => {
-            const isActive = activeCourse === course;
+            const isActive = activeCourse === course.id;
 
             return (
               <button
-                key={course}
+                key={course.id}
                 type="button"
-                className={`course-button${isActive ? " active" : ""}`}
-                onClick={() => setActiveCourse(course)}
+                className={`course-button${isActive ? ' active' : ''}`}
+                onClick={() => setSelectedCourseId(course.id)}
                 aria-pressed={isActive}
                 disabled={isActive}
               >
-                {course}
+                {course.label}
               </button>
             );
           })}

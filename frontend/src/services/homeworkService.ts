@@ -1,3 +1,4 @@
+// I.3 Chain: Service (business) → homeworkRepository (data)
 import { homeworkRepository } from "../repositories/homeworkRepository";
 import type { Homework } from "../types/Homework";
 

@@ -37,6 +37,8 @@ To be decided
 - Muniru Adam
 - Kaeden Barta
 
+---
+
 ## Sprint 1
 
 ### Team Contributions
@@ -89,3 +91,25 @@ To be decided
 ### Feature Pages
 
 Our feature pages were planned and built collaboratively, with all team members contributing to their development.
+
+---
+
+## Sprint 3
+
+### Team Contributions
+
+- Removed prop drilling across pages — _Noah_
+- Homework service (filter/sort/status/add/remove) — _Noah_
+- Repository-only data access (Homework) — _Noah_
+- Architecture refactor to CourseContext (UI-only) — _Noah_, _Adam_
+- Hooks for homework (useHomework + counts) — _Kaeden_
+- Notes repository + service layer (repo → service → hook) — _Kaeden_
+- useNotes custom hook (loading/error + refresh pattern) — _Kaeden_
+- Notes filtering by courseId + pinned-first sorting — _Kaeden_
+- Notes model unified; NoteForm uses Context — _Kaeden_
+- Notes pin/remove UI refresh — _Kaeden_
+- Merge conflict resolution (T.1 duplicate task) — _Kaeden_
+- BrowserRouter in main.tsx; App JSX fixes — _Adam_
+- Typecheck/build/Vercel checks — _Adam_
+- Architecture doc (I.4) + chain comments/probe (I.3) — _Noah_
+- Sprint review and PR approval — _Adam_, _Kaeden_, _Noah_
