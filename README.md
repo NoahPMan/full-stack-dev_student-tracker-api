@@ -113,3 +113,11 @@ Our feature pages were planned and built collaboratively, with all team members 
 - Typecheck/build/Vercel checks — _Adam_
 - Architecture doc (I.4) + chain comments/probe (I.3) — _Noah_
 - Sprint review and PR approval — _Adam_, _Kaeden_, _Noah_
+
+---
+
+## Sprint 4
+
+### Team Contributions
+
+- T.3 Prisma Install - _Noah_
