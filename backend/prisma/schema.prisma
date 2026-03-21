@@ -1,0 +1,25 @@
+// backend/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"   // <-- no url here in Prisma 7
+}
+
+/* your models below */
+enum HomeworkStatus {
+  todo
+  in_progress
+  done
+}
+
+model Homework {
+  id        String          @id @default(cuid())
+  title     String
+  courseId  String
+  dueDate   DateTime
+  status    HomeworkStatus  @default(todo)
+  createdAt DateTime        @default(now())
+}
