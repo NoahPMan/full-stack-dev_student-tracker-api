@@ -1,8 +1,3 @@
-/**
- * notesService (business layer)
- * All rules for filtering and sorting notes live here
- * The UI calls the hook, the hook calls this service, and the service calls the repository.
- */
 import type { Note } from "../types/Note";
 import { notesRepository } from "../repositories/notesRepository";
 
