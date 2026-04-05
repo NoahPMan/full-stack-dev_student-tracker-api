@@ -1,29 +1,70 @@
-// I.3 Chain: Repository (data) → in‑memory test data (homework.testdata.ts)
 import type { Repository } from './baseRepository';
 import type { Homework } from '../types/Homework';
-import { homeworkTestData } from '../data/homework.testdata';
 
-let data = [...homeworkTestData];
-const delay = <T,>(v: T, ms = 100) => new Promise<T>(r => setTimeout(() => r(v), ms));
+const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+const BASE = `${API}/api/v1/homework`;
+
+function normalizeDueDate(v: string) {
+    return v && v.length === 10 ? `${v}T00:00:00.000Z` : v;
+}
+
+async function http<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
+    const res = await fetch(input, init);
+    if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` — ${text}` : ''}`);
+    }
+    if (res.status === 204) return undefined as unknown as T; // DELETE 204
+    return (await res.json()) as T;
+}
 
 export const homeworkRepository: Repository<Homework> = {
-    async list() { return delay([...data]); },
-    async get(id) { return delay(data.find(h => h.id === id)); },
+    async list() {
+        return http<Homework[]>(BASE);
+    },
+
+    async get(id) {
+        // No GET /:id route yet; fetch-and-filter
+        const all = await http<Homework[]>(BASE);
+        return all.find(h => h.id === id);
+    },
+
     async create(input) {
-        const id = input.id ?? `h${(Math.random() * 1e6 | 0).toString().padStart(6, '0')}`;
-        const item: Homework = { ...input, id } as Homework;
-        data = [item, ...data];
-        return delay(item);
+        const payload = {
+            ...input,
+            dueDate: normalizeDueDate((input as any).dueDate),
+        };
+        return http<Homework>(BASE, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
     },
-    async update(id, p) {
-        const i = data.findIndex(h => h.id === id);
-        if (i < 0) return delay(undefined);
-        data[i] = { ...data[i], ...p };
-        return delay(data[i]);
+
+    async update(id, patch) {
+        const payload = {
+            ...patch,
+            ...(patch?.dueDate ? { dueDate: normalizeDueDate((patch as any).dueDate) } : {}),
+        };
+        try {
+            return await http<Homework>(`${BASE}/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+        } catch (err: any) {
+            if (String(err?.message || '').startsWith('HTTP 404')) return undefined;
+            throw err;
+        }
     },
+
     async remove(id) {
-        const prev = data.length;
-        data = data.filter(h => h.id !== id);
-        return delay(data.length < prev);
-    }
+        try {
+            await http<void>(`${BASE}/${id}`, { method: 'DELETE' });
+            return true;
+        } catch (err: any) {
+            if (String(err?.message || '').startsWith('HTTP 404')) return false;
+            throw err;
+        }
+    },
 };

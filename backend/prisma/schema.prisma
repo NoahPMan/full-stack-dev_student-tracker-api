@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum HomeworkStatus {
+  todo
+  in_progress
+  done
+}
+
+model Homework {
+  id        String         @id @default(cuid())
+  title     String
+  courseId  String
+  dueDate   DateTime
+  status    HomeworkStatus @default(todo)
+  createdAt DateTime       @default(now())
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  courseId  String
+  title     String
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime?
+  pinned    Boolean  @default(false)
+}
