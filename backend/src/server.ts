@@ -4,20 +4,25 @@ import cors from 'cors';
 
 // Routers
 import homeworkRoutes from './routes/homework';
-// import coursesRoutes from './routes/courses';
+import notesRoutes from './routes/notes';
+import coursesRoutes from './routes/courses';
 
 const app = express();
 const PORT = Number(process.env.PORT ?? 3000);
 
-// Middleware
 app.use(express.json());
+
 app.use(cors());
 
 // Health
-app.get('/', (_req, res) => res.send('Student Tracker API is running'));
+app.get('/', (_req, res) => {
+  res.send('Student Tracker API is running');
+});
 
-// Routes
+// API routes
 app.use('/api/v1/homework', homeworkRoutes);
+app.use('/api/v1/notes', notesRoutes);
+app.use('/api/v1/courses', coursesRoutes);
 
 // Start
 app.listen(PORT, () => {
