@@ -1,9 +1,3 @@
-/**
- * useNotes (presentation hook)
- * UI friendly wrapper around the Notes feature
- * Handles loading and error state, and exposes simple actions for the page to call
- * Calls the service layer so business rules stay out of components
- */
 import { useEffect, useMemo, useState } from "react";
 import type { Note } from "../types/Note";
 import {

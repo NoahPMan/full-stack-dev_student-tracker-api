@@ -1,14 +1,11 @@
-// backend/prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"   // <-- no url here in Prisma 7
+  provider = "postgresql"
 }
 
-/* your models below */
 enum HomeworkStatus {
   todo
   in_progress
@@ -16,7 +13,7 @@ enum HomeworkStatus {
 }
 
 model Homework {
-  id        String          @id @default(cuid())
+  id        String         @id @default(cuid())
   title     String
   courseId  String
   dueDate   DateTime
@@ -39,4 +36,16 @@ model Course {
   updatedAt   DateTime @updatedAt
 
   @@map("courses")  // Database table name will be "courses"
+  status    HomeworkStatus @default(todo)
+  createdAt DateTime       @default(now())
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  courseId  String
+  title     String
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime?
+  pinned    Boolean  @default(false)
 }

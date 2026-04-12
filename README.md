@@ -120,4 +120,5 @@ Our feature pages were planned and built collaboratively, with all team members 
 
 ### Team Contributions
 
+- T.1 Backend Initial Setup - _Kaeden_
 - T.3 Prisma Install - _Noah_
