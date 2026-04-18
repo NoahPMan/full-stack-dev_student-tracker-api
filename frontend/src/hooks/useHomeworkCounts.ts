@@ -11,14 +11,19 @@ export function useHomeworkCounts(courseId?: string) {
 
     useEffect(() => {
         let cancelled = false;
+
         (async () => {
-            setLoading(true); setError(undefined);
+            setLoading(true);
+            setError(undefined);
+
             try {
-                const all = await fetchAllHomework();
+                const all = await fetchAllHomework(); // backend-driven via repository
                 const list = courseId ? all.filter(h => h.courseId === courseId) : all;
+
                 const todo = list.filter(h => h.status === 'todo').length;
                 const inProgress = list.filter(h => h.status === 'in-progress').length;
                 const done = list.filter(h => h.status === 'done').length;
+
                 if (!cancelled) setCounts({ todo, inProgress, done, total: list.length });
             } catch {
                 if (!cancelled) setError('Failed to load assignment counts');
@@ -26,7 +31,10 @@ export function useHomeworkCounts(courseId?: string) {
                 if (!cancelled) setLoading(false);
             }
         })();
-        return () => { cancelled = true; };
+
+        return () => {
+            cancelled = true;
+        };
     }, [courseId]);
 
     return { loading, error, ...counts };
