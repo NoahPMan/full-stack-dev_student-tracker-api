@@ -1,5 +1,3 @@
--- AlterTable
+-- Add Clerk user ID to notes for user-scoped queries.
+-- Stores the Clerk userId string directly (no local User table).
 ALTER TABLE "Note" ADD COLUMN "userId" TEXT;
-
--- AddForeignKey
-ALTER TABLE "Note" ADD CONSTRAINT "Note_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

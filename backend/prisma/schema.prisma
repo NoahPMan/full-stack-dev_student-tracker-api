@@ -12,17 +12,6 @@ enum HomeworkStatus {
   done
 }
 
-// Stores application user IDs linked to Clerk auth identities.
-// Clerk manages authentication; this table tracks the app-level user record.
-model User {
-  id        String     @id @default(cuid())
-  clerkId   String     @unique
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  notes     Note[]
-  homework  Homework[]
-}
-
 model Homework {
   id        String         @id @default(cuid())
   title     String
@@ -30,12 +19,10 @@ model Homework {
   dueDate   DateTime
   status    HomeworkStatus @default(todo)
   createdAt DateTime       @default(now())
-  userId    String?
-  user      User?          @relation(fields: [userId], references: [id])
+  userId    String?        // Clerk user ID
 }
 
 // Course Model - Muniru Adam (Sprint 4, I.2)
-// Stores information about courses in the student tracker
 model Course {
   id          String   @id @default(uuid())
   code        String   @unique
@@ -58,6 +45,5 @@ model Note {
   createdAt DateTime  @default(now())
   updatedAt DateTime?
   pinned    Boolean   @default(false)
-  userId    String?
-  user      User?     @relation(fields: [userId], references: [id])
+  userId    String?   // Clerk user ID
 }
