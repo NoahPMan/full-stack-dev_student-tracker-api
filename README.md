@@ -127,3 +127,14 @@ Our feature pages were planned and built collaboratively, with all team members 
 - I.2: Notes Database implementation - _Adam_
 - I.3: Frontend integration for Notes - _Adam_
 - I.4 Application State Persistence for Notes - _Adam_
+
+---
+
+## Sprint 5
+
+### Team Contributions
+
+- T.1 Clerk setup - _Adam_
+- T.3 Back-end User Management - _Adam_
+- T.4 User Login/Registration - _Adam_
+- I.1 Custom User-Associated Data and Session Management for Notes - _Adam_
