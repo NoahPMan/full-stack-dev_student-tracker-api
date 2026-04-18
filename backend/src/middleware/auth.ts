@@ -9,6 +9,7 @@ import type { Request, Response, NextFunction } from 'express';
  */
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
   const { userId: clerkId } = getAuth(req);
+  console.log('requireAuth - Clerk userId:', clerkId);
   if (!clerkId) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
