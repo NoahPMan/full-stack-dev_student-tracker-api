@@ -122,3 +122,8 @@ Our feature pages were planned and built collaboratively, with all team members 
 
 - T.1 Backend Initial Setup - _Kaeden_
 - T.3 Prisma Install - _Noah_
+- T.4 CORS setup - _Adam_
+- I.1: Back-end Resource Endpoint for Notes - _Adam_
+- I.2: Notes Database implementation - _Adam_
+- I.3: Frontend integration for Notes - _Adam_
+- I.4 Application State Persistence for Notes - _Adam_

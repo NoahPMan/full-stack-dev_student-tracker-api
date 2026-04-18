@@ -1,6 +1,13 @@
 import type { Note } from "../types/Note";
 import { notesRepository } from "../repositories/notesRepository";
 
+export type NoteCreateInput = {
+  courseId: string;
+  title: string;
+  body: string;
+  pinned?: boolean;
+};
+
 export async function fetchAllNotes() {
   return notesRepository.list();
 }
@@ -28,12 +35,19 @@ export function filterAndSortNotes(
   return out;
 }
 
-export async function addNote(note: Note) {
-  return notesRepository.create(note);
+export async function addNote(input: NoteCreateInput) {
+  return notesRepository.create(input as Omit<Note, "id">);
 }
 
 export async function removeNote(id: string) {
   return notesRepository.remove(id);
+}
+
+export async function editNote(
+  id: string,
+  patch: { title?: string; body?: string },
+) {
+  return notesRepository.update(id, patch);
 }
 
 export async function togglePin(id: string) {

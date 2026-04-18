@@ -1,5 +1,3 @@
-import cors from "cors";
-import express from "express";
 import courseRoutes from './routes/courses';
 import 'dotenv/config';
 import express from 'express';
@@ -42,11 +40,13 @@ app.get("/api/health", (_req, res) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(`✅ Server is running on port ${port}`);
+app.listen(PORT, () => {
+  console.log(`✅ Server is running on port ${PORT}`);
   console.log(`✅ CORS enabled for: http://localhost:5173`);
-  console.log(`✅ API available at: http://localhost:${port}`);
-  console.log(`✅ Course API: http://localhost:${port}/api/courses`);
+  console.log(`✅ API available at: http://localhost:${PORT}`);
+  console.log(`✅ Course API: http://localhost:${PORT}/api/courses`);
+});
+
 app.use(express.json());
 
 app.use(cors());

@@ -2,10 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import type { Note } from "../types/Note";
 import {
   addNote,
+  editNote,
   fetchAllNotes,
   filterAndSortNotes,
   removeNote,
   togglePin,
+  type NoteCreateInput,
 } from "../services/notesService";
 
 export function useNotes(opts?: { courseId?: string }) {
@@ -51,8 +53,13 @@ export function useNotes(opts?: { courseId?: string }) {
     list,
     total: all.length,
 
-    async add(note: Note) {
-      await addNote(note);
+    async add(input: NoteCreateInput) {
+      await addNote(input);
+      await refresh();
+    },
+
+    async update(id: string, patch: { title?: string; body?: string }) {
+      await editNote(id, patch);
       await refresh();
     },
 
