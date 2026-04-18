@@ -9,11 +9,44 @@
   color: white;
   padding: 1rem 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .layout-header h1 {
   margin: 0;
   font-size: 1.8rem;
+}
+
+.header-auth {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.auth-btn {
+  padding: 0.4rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: transparent;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.auth-btn--primary {
+  background: white;
+  color: #2c3e50;
+  border-color: white;
+}
+
+.auth-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.auth-btn--primary:hover {
+  background: rgba(255, 255, 255, 0.85);
 }
 
 .layout-main {

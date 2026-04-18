@@ -2,6 +2,7 @@ import courseRoutes from './routes/courses';
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import { clerkMiddleware } from '@clerk/express'
 
 // Routers
 import homeworkRoutes from './routes/homework';
@@ -19,6 +20,8 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+app.use(clerkMiddleware());
 
 app.use('/api/courses', courseRoutes);
 
