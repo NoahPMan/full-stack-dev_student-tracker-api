@@ -2,6 +2,8 @@
  * Module-level token getter registered once from the Clerk useAuth() hook
  * (see App.tsx). Repositories are plain TS modules that can't use hooks,
  * so this lets them attach the Bearer token without prop-drilling.
+ * 
+ * Idea from Clerk docs: https://clerk.com/docs/nextjs/middleware-protected-routes#fetching-from-api-routes
  */
 type TokenGetter = () => Promise<string | null>;
 
