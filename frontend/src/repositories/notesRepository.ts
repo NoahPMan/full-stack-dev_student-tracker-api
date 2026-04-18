@@ -1,11 +1,12 @@
 import type { Repository } from "./baseRepository";
 import type { Note } from "../types/Note";
+import { authFetch } from "../lib/authFetch";
 
 const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 const BASE = `${API}/api/v1/notes`;
 
 async function http<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
-  const res = await fetch(input, init);
+  const res = await authFetch(input, init);
   if (!res.ok) {
     const text = await res.text().catch(() => "");
     throw new Error(

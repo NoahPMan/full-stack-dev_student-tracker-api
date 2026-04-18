@@ -1,27 +1,48 @@
-import type { Request, Response } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { getAuth } from '@clerk/express';
 import * as svc from '../services/homeworkService';
 
-// Shape of route params for /:id
-type IdParam = { id: string };
+function paramId(req: Request): string {
+  const v = req.params.id;
+  return Array.isArray(v) ? v[0] : v;
+}
 
-export const getAll = async (_req: Request, res: Response) => {
-  const items = await svc.list();
-  return res.json(items);
+export const getAll = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId } = getAuth(req);
+    const items = await svc.list(userId!);
+    return res.json(items);
+  } catch (err) {
+    next(err);
+  }
 };
 
-export const post = async (req: Request, res: Response) => {
-  const created = await svc.create(req.body);
-  return res.status(201).json(created);
+export const post = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId } = getAuth(req);
+    const created = await svc.create({ ...req.body, userId: userId! });
+    return res.status(201).json(created);
+  } catch (err) {
+    next(err);
+  }
 };
 
-export const patch = async (req: Request<IdParam>, res: Response) => {
-  const { id } = req.params;
-  const updated = await svc.update(id, req.body);
-  return res.json(updated);
+export const patch = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId } = getAuth(req);
+    const updated = await svc.update(paramId(req), userId!, req.body);
+    return res.json(updated);
+  } catch (err) {
+    next(err);
+  }
 };
 
-export const del = async (req: Request<IdParam>, res: Response) => {
-  const { id } = req.params;
-  await svc.remove(id);
-  return res.status(204).end();
+export const del = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId } = getAuth(req);
+    await svc.remove(paramId(req), userId!);
+    return res.status(204).end();
+  } catch (err) {
+    next(err);
+  }
 };

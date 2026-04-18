@@ -5,6 +5,7 @@ type CreateNoteInput = {
   title: string;
   body: string;
   pinned?: boolean;
+  userId: string;
 };
 
 type UpdateNoteInput = {
@@ -14,17 +15,16 @@ type UpdateNoteInput = {
   pinned?: boolean;
 };
 
-export async function getAllNotes() {
+export async function getAllNotes(userId: string) {
   return prisma.note.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
+    where: { userId },
+    orderBy: { createdAt: "desc" },
   });
 }
 
-export async function getNoteById(id: string) {
+export async function getNoteById(id: string, userId: string) {
   return prisma.note.findUnique({
-    where: { id },
+    where: { id, userId },
   });
 }
 
@@ -35,40 +35,25 @@ export async function createNote(input: CreateNoteInput) {
       title: input.title,
       body: input.body,
       pinned: input.pinned ?? false,
+      userId: input.userId,
     },
   });
 }
 
-export async function updateNote(id: string, input: UpdateNoteInput) {
-  const existingNote = await prisma.note.findUnique({
-    where: { id },
-  });
-
-  if (!existingNote) {
-    return undefined;
-  }
+export async function updateNote(id: string, userId: string, input: UpdateNoteInput) {
+  const existing = await prisma.note.findUnique({ where: { id, userId } });
+  if (!existing) return undefined;
 
   return prisma.note.update({
     where: { id },
-    data: {
-      ...input,
-      updatedAt: new Date(),
-    },
+    data: { ...input, updatedAt: new Date() },
   });
 }
 
-export async function deleteNote(id: string) {
-  const existingNote = await prisma.note.findUnique({
-    where: { id },
-  });
+export async function deleteNote(id: string, userId: string) {
+  const existing = await prisma.note.findUnique({ where: { id, userId } });
+  if (!existing) return false;
 
-  if (!existingNote) {
-    return false;
-  }
-
-  await prisma.note.delete({
-    where: { id },
-  });
-
+  await prisma.note.delete({ where: { id } });
   return true;
 }

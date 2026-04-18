@@ -1,70 +1,45 @@
-import courseRoutes from './routes/courses';
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { clerkMiddleware } from '@clerk/express'
+import { clerkMiddleware } from '@clerk/express';
 
-// Routers
 import homeworkRoutes from './routes/homework';
 import notesRoutes from './routes/notes';
 import coursesRoutes from './routes/courses';
+import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
 const PORT = Number(process.env.PORT ?? 3000);
 
+// Global middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
-
 app.use(express.json());
 
+// Initialises Clerk on every request so getAuth() works downstream.
+// Does NOT block unauthenticated requests — use requireAuth() on protected routes.
 app.use(clerkMiddleware());
 
-app.use('/api/courses', courseRoutes);
-
-app.get("/", (_req, res) => {
-  res.send("Student Tracker API is running");
-});
-
-app.get("/api/health", (_req, res) => {
-  res.json({ 
-    status: "healthy", 
-    message: "Student Tracker API is operational",
-    cors: {
-      allowedOrigin: "http://localhost:5173",
-      credentialsEnabled: true,
-      allowedMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-      allowedHeaders: ['Content-Type', 'Authorization']
-    },
-    timestamp: new Date().toISOString()
-  });
-});
-
-app.listen(PORT, () => {
-  console.log(`✅ Server is running on port ${PORT}`);
-  console.log(`✅ CORS enabled for: http://localhost:5173`);
-  console.log(`✅ API available at: http://localhost:${PORT}`);
-  console.log(`✅ Course API: http://localhost:${PORT}/api/courses`);
-});
-
-app.use(express.json());
-
-app.use(cors());
-
 // Health
-app.get('/', (_req, res) => {
-  res.send('Student Tracker API is running');
-});
+app.get('/', (_req, res) => res.send('Student Tracker API is running'));
+app.get('/api/health', (_req, res) =>
+  res.json({ status: 'healthy', timestamp: new Date().toISOString() }),
+);
 
-// API routes
-app.use('/api/v1/homework', homeworkRoutes);
-app.use('/api/v1/notes', notesRoutes);
+// Courses are public (shared catalogue — no auth required)
 app.use('/api/v1/courses', coursesRoutes);
 
-// Start
+// Notes and Homework are user-scoped (requireAuth applied inside each router)
+app.use('/api/v1/notes', notesRoutes);
+app.use('/api/v1/homework', homeworkRoutes);
+
+// Centralized error handler — must be registered after all routes
+app.use(errorHandler);
+
 app.listen(PORT, () => {
   console.log(`API listening on http://localhost:${PORT}`);
 });
