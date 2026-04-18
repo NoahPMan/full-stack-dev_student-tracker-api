@@ -12,7 +12,7 @@ import { useNotes } from "../hooks/useNotes";
 
 export default function Notes() {
   const { selectedCourseId } = useCourse();
-  const { loading, error, list, add, remove, togglePin } = useNotes({
+  const { loading, error, list, add, update, remove, togglePin } = useNotes({
     courseId: selectedCourseId,
   });
 
@@ -32,7 +32,7 @@ export default function Notes() {
       {error && <p style={{ color: "crimson" }}>{error}</p>}
 
       {!loading && !error && (
-        <NoteList notes={list} onRemove={remove} onTogglePin={togglePin} />
+        <NoteList notes={list} onRemove={remove} onTogglePin={togglePin} onUpdate={update} />
       )}
     </div>
   );
