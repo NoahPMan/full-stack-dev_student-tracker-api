@@ -36,8 +36,6 @@ model Course {
   updatedAt   DateTime @updatedAt
 
   @@map("courses")  // Database table name will be "courses"
-  status    HomeworkStatus @default(todo)
-  createdAt DateTime       @default(now())
 }
 
 model Note {
