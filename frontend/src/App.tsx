@@ -1,7 +1,7 @@
 // src/App.tsx
 import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { useAuth } from '@clerk/react';
+import { useAuth } from '@clerk/clerk-react';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Courses from './pages/Courses';
