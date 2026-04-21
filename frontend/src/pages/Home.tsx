@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '@clerk/react';
+import { useAuth } from '@clerk/clerk-react';
 import CourseSelector from '../components/CourseSelector';
 
 interface Course {
@@ -11,7 +11,7 @@ interface Course {
   semester?: string;
 }
 
-const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
 
 export default function Home() {
   const { isSignedIn, isLoaded } = useAuth();
@@ -19,11 +19,27 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
+
     fetch(`${API}/api/v1/courses`)
       .then((res) => res.json())
-      .then((data) => { if (data.success) setCourses(data.data); })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+      .then((data) => {
+        if (cancelled) return;
+
+        // Accept either: [...] OR { success: true, data: [...] }
+        const list = Array.isArray(data) ? data : data?.data;
+        if (Array.isArray(list)) setCourses(list);
+      })
+      .catch(() => {
+        // ignore for now; you can set an error message if you want
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
@@ -31,9 +47,7 @@ export default function Home() {
       <h2>Welcome to Student Tracker</h2>
       <p>Manage your courses, assignments, and grades all in one place.</p>
 
-      {isLoaded && isSignedIn && (
-        <CourseSelector showQuickButtons={true} />
-      )}
+      {isLoaded && isSignedIn && <CourseSelector showQuickButtons={true} />}
 
       {isLoaded && !isSignedIn && (
         <>
@@ -41,9 +55,7 @@ export default function Home() {
 
           {loading && <p>Loading courses...</p>}
 
-          {!loading && courses.length === 0 && (
-            <p>No courses available yet.</p>
-          )}
+          {!loading && courses.length === 0 && <p>No courses available yet.</p>}
 
           {!loading && courses.length > 0 && (
             <ul className="course-list">
@@ -51,9 +63,7 @@ export default function Home() {
                 <li key={course.id} className="course-card">
                   <strong>{course.code}</strong>
                   <p>{course.name}</p>
-                  {course.instructor && (
-                    <p className="course-card__meta">{course.instructor}</p>
-                  )}
+                  {course.instructor && <p className="course-card__meta">{course.instructor}</p>}
                   <p className="course-card__meta">
                     {course.credits} credit{course.credits !== 1 ? 's' : ''}
                     {course.semester ? ` · ${course.semester}` : ''}

@@ -3,17 +3,21 @@ import type { Homework } from '../types/Homework';
 import { filterSortHomework } from '../services/homeworkService';
 import { homeworkRepository } from '../repositories/homeworkRepository';
 
-// Map UI ↔ API status strings
-type UiStatus = 'all' | 'todo' | 'in-progress' | 'done';
-type ApiStatus = 'todo' | 'in_progress' | 'done';
+type HomeworkStatusUi = 'todo' | 'in-progress' | 'done';
+type StatusFilter = 'all' | HomeworkStatusUi;
 
-const toApiStatus = (s: UiStatus): ApiStatus => (s === 'in-progress' ? 'in_progress' : (s as ApiStatus));
-const toUiStatus = (s: ApiStatus): UiStatus => (s === 'in_progress' ? 'in-progress' : s);
+type HomeworkStatusApi = 'todo' | 'in_progress' | 'done';
+
+const toApiStatus = (s: HomeworkStatusUi): HomeworkStatusApi =>
+    s === 'in-progress' ? 'in_progress' : s;
+
+const toUiStatus = (s: HomeworkStatusApi): HomeworkStatusUi =>
+    s === 'in_progress' ? 'in-progress' : s;
 
 export function useHomework(
     initial: {
         courseId?: string;
-        status?: UiStatus;
+        status?: StatusFilter;
         q?: string;
         sort?: 'dueDate' | 'createdAt';
     } = { status: 'all', sort: 'dueDate' },
@@ -22,20 +26,25 @@ export function useHomework(
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | undefined>(undefined);
     const [courseId, setCourseId] = useState(initial.courseId);
-    const [status, setStatusFilter] = useState<UiStatus>(initial.status ?? 'all');
+    const [status, setStatusFilter] = useState<StatusFilter>(initial.status ?? 'all');
     const [q, setQ] = useState(initial.q ?? '');
     const [sort, setSort] = useState<'dueDate' | 'createdAt'>(initial.sort ?? 'dueDate');
 
-    // Load from API repository
     useEffect(() => {
         let cancelled = false;
+
         (async () => {
             setLoading(true);
             setError(undefined);
+
             try {
                 const items = await homeworkRepository.list();
-                // Convert API 'in_progress' → UI 'in-progress' if your UI expects hyphenated form
-                const uiItems = items.map(h => ({ ...h, status: toUiStatus(h.status as ApiStatus) })) as Homework[];
+
+                const uiItems = items.map((h) => ({
+                    ...h,
+                    status: toUiStatus(h.status as HomeworkStatusApi),
+                })) as Homework[];
+
                 if (!cancelled) setAll(uiItems);
             } catch {
                 if (!cancelled) setError('Failed to load assignments');
@@ -43,12 +52,12 @@ export function useHomework(
                 if (!cancelled) setLoading(false);
             }
         })();
+
         return () => {
             cancelled = true;
         };
     }, []);
 
-    // Client-side filter/sort using your existing helper
     const list = useMemo(
         () => filterSortHomework(all, { courseId, status, q, sort }),
         [all, courseId, status, q, sort],
@@ -56,44 +65,29 @@ export function useHomework(
 
     async function refresh() {
         const items = await homeworkRepository.list();
-        const uiItems = items.map(h => ({ ...h, status: toUiStatus(h.status as ApiStatus) })) as Homework[];
+        const uiItems = items.map((h) => ({
+            ...h,
+            status: toUiStatus(h.status as HomeworkStatusApi),
+        })) as Homework[];
         setAll(uiItems);
     }
 
-    const actions = {
-        setCourseId,
-        setStatusFilter,
-        setQ,
-        setSort,
+    async function setItemStatus(id: string, next: HomeworkStatusUi) {
+        await homeworkRepository.update(id, { status: toApiStatus(next) } as any);
+        await refresh();
+    }
 
-        async toTodo(id: string) {
-            await homeworkRepository.update(id, { status: toApiStatus('todo') as any });
-            await refresh();
-        },
-        async toInProgress(id: string) {
-            await homeworkRepository.update(id, { status: toApiStatus('in-progress') as any });
-            await refresh();
-        },
-        async toDone(id: string) {
-            await homeworkRepository.update(id, { status: toApiStatus('done') as any });
-            await refresh();
-        },
+    async function add(input: Omit<Homework, 'id' | 'createdAt'>) {
+        const payload: any = { ...input };
+        if (payload.status) payload.status = toApiStatus(payload.status);
+        await homeworkRepository.create(payload);
+        await refresh();
+    }
 
-        async add(input: Omit<Homework, 'id' | 'createdAt'>) {
-            // Convert 'in-progress' → 'in_progress' if present; dueDate normalization is done in the repo
-            const payload = { ...input } as any;
-            if (payload.status) payload.status = toApiStatus(payload.status);
-            await homeworkRepository.create(payload);
-            await refresh();
-        },
-
-        async remove(id: string) {
-            await homeworkRepository.remove(id);
-            await refresh();
-        },
-
-        refresh,
-    };
+    async function remove(id: string) {
+        await homeworkRepository.remove(id);
+        await refresh();
+    }
 
     return {
         loading,
@@ -104,7 +98,19 @@ export function useHomework(
         status,
         q,
         sort,
-        ...actions,
+
+        setCourseId,
+        setStatusFilter,
+        setQ,
+        setSort,
+
+        toTodo: (id: string) => setItemStatus(id, 'todo'),
+        toInProgress: (id: string) => setItemStatus(id, 'in-progress'),
+        toDone: (id: string) => setItemStatus(id, 'done'),
+
+        add,
+        remove,
+        refresh,
     };
 }
 

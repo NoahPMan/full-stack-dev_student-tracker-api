@@ -13,16 +13,22 @@ enum HomeworkStatus {
 }
 
 model Homework {
-  id        String         @id @default(cuid())
-  title     String
-  courseId  String
-  dueDate   DateTime
-  status    HomeworkStatus @default(todo)
-  createdAt DateTime       @default(now())
-  userId    String?        // Clerk user ID
+  id          String         @id @default(cuid())
+  title       String
+  description String?
+  courseId    String
+  dueDate     DateTime
+  status      HomeworkStatus @default(todo)
+  createdAt   DateTime       @default(now())
+
+  // Clerk user ID (e.g., "user_...")
+  userId      String?
+
+  @@index([userId])
+  @@index([courseId])
+  @@index([dueDate])
 }
 
-// Course Model - Muniru Adam (Sprint 4, I.2)
 model Course {
   id          String   @id @default(uuid())
   code        String   @unique
@@ -42,8 +48,14 @@ model Note {
   courseId  String
   title     String
   body      String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime?
   pinned    Boolean   @default(false)
-  userId    String?   // Clerk user ID
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  // Clerk user ID (e.g., "user_...")
+  userId    String?
+
+  @@index([userId])
+  @@index([courseId])
+  @@index([pinned])
 }

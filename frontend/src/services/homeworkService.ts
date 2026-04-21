@@ -1,5 +1,6 @@
 import type { Homework } from '../types/Homework';
 import { homeworkRepository } from '../repositories/homeworkRepository';
+
 export type UiStatus = 'all' | 'todo' | 'in-progress' | 'done';
 export type SortKey = 'dueDate' | 'createdAt';
 
@@ -39,25 +40,21 @@ const toApiStatus = (s: UiStatus): ApiStatus =>
 const toUiStatus = (s: ApiStatus): UiStatus =>
   s === 'in_progress' ? 'in-progress' : s;
 
-// Load all from API and normalize status to UI shape if needed
 export async function fetchAllHomework(): Promise<Homework[]> {
   const rows = await homeworkRepository.list();
   return rows.map(h => ({ ...h, status: toUiStatus(h.status as ApiStatus) })) as Homework[];
 }
 
-// Create via API (normalize 'yyyy-mm-dd' to ISO is handled in the repository)
 export async function addHomework(input: Omit<Homework, 'id' | 'createdAt'>) {
   const payload: any = { ...input };
   if (payload.status) payload.status = toApiStatus(payload.status);
   return homeworkRepository.create(payload);
 }
 
-// Update only the status via API
 export async function setStatus(id: string, status: UiStatus) {
   return homeworkRepository.update(id, { status: toApiStatus(status) } as any);
 }
 
-// Delete via API
 export async function removeHomework(id: string) {
   return homeworkRepository.remove(id);
 }

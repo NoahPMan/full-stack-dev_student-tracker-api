@@ -1,50 +1,54 @@
-import type React from "react";
-import useFormField from "../../hooks/useFormField";
-import type { HomeworkItem } from "./HomeworkList";
+import type React from 'react';
+import useFormField from '../../hooks/useFormField';
 
-export default function HomeworkForm({ onAdd }: { onAdd: (item: HomeworkItem) => void }) {
-  const title = useFormField("");
-  const course = useFormField("");
-  const due = useFormField("");
+type HomeworkCreateInput = {
+  title: string;
+  courseId: string;
+  dueDate: string; // yyyy-mm-dd is fine; backend normalizes
+};
+
+export default function HomeworkForm({ onAdd }: { onAdd: (input: HomeworkCreateInput) => void }) {
+  const title = useFormField('');
+  const courseId = useFormField('');
+  const dueDate = useFormField('');
 
   const submit = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!title.value.trim() || !course.value.trim() || !due.value.trim()) return;
+    if (!title.value.trim() || !courseId.value.trim() || !dueDate.value.trim()) return;
 
     onAdd({
-      id: crypto.randomUUID(),
-      title: title.value,
-      course: course.value,
-      due: due.value,
-      status: "todo",
+      title: title.value.trim(),
+      courseId: courseId.value.trim(),
+      dueDate: dueDate.value.trim(),
     });
 
     title.reset();
-    course.reset();
-    due.reset();
+    courseId.reset();
+    dueDate.reset();
   };
 
   return (
-    <form className="hw-form" onSubmit={submit}>
+    <form className= "hw-form" onSubmit = { submit } >
       <input
-        value={title.value}
-        onChange={(e) => title.onChange(e.target.value)}
-        placeholder="Homework title"
-        required
-      />
-      <input
-        value={course.value}
-        onChange={(e) => course.onChange(e.target.value)}
-        placeholder="Course code"
-        required
-      />
-      <input
+        value={ title.value }
+  onChange = {(e) => title.onChange(e.target.value)
+}
+placeholder = "Homework title"
+required
+  />
+  <input
+        value={ courseId.value }
+onChange = {(e) => courseId.onChange(e.target.value)}
+placeholder = "Course code"
+required
+  />
+  <input
         type="date"
-        value={due.value}
-        onChange={(e) => due.onChange(e.target.value)}
-        required
-      />
-      <button type="submit">Add</button>
+value = { dueDate.value }
+onChange = {(e) => dueDate.onChange(e.target.value)}
+required
+  />
+  <button type="submit" > Add </button>
     </form>
   );
 }
