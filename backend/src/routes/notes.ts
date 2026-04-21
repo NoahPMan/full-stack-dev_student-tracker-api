@@ -20,7 +20,7 @@ const router = Router();
  * proceed with the real request that includes Authorization.
  * (Your app-level cors + app.options('*', ...) is still recommended.)
  */
-router.options('*', (_req, res) => res.sendStatus(204));
+router.options(/.*/, (_req, res) => res.sendStatus(204));
 
 // Signed-in only routes
 router.get('/', requireAuth, getNotes);
