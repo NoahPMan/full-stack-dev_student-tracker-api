@@ -1,4 +1,4 @@
-// src/App.tsx
+// frontend/src/App.tsx
 import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
@@ -11,12 +11,14 @@ import { CourseProvider } from './context/CourseContext';
 import { registerTokenGetter } from './lib/authFetch';
 
 export default function App() {
-  const { getToken } = useAuth();
+  const { getToken, isLoaded, isSignedIn } = useAuth();
 
-  // Make the Clerk session token available to repository fetch calls
   useEffect(() => {
-    registerTokenGetter(getToken);
-  }, [getToken]);
+    registerTokenGetter(async () => {
+      if (!isLoaded || !isSignedIn) return null;
+      return await getToken();
+    });
+  }, [getToken, isLoaded, isSignedIn]);
 
   return (
     <CourseProvider>
