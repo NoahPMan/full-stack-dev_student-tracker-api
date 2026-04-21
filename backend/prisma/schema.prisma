@@ -13,39 +13,49 @@ enum HomeworkStatus {
 }
 
 model Homework {
-  id        String         @id @default(cuid())
-  title     String
-  courseId  String
-  dueDate   DateTime
-  status    HomeworkStatus  @default(todo)
-  createdAt DateTime        @default(now())
+  id          String         @id @default(cuid())
+  title       String
+  description String?
+  courseId    String
+  dueDate     DateTime
+  status      HomeworkStatus @default(todo)
+  createdAt   DateTime       @default(now())
+
+  // Clerk user ID (e.g., "user_...")
+  userId      String?
+
+  @@index([userId])
+  @@index([courseId])
+  @@index([dueDate])
 }
 
-
-// Course Model - Muniru Adam (Sprint 4, I.2)
-// Stores information about courses in the student tracker
 model Course {
   id          String   @id @default(uuid())
-  code        String   @unique  // Course code (e.g., "COMP-4002") - must be unique
-  name        String                // Course name (e.g., "Full-Stack Development")
-  credits     Int                   // Number of credits (1-6)
-  instructor  String?               // Optional: Instructor/professor name
-  semester    String?               // Optional: Semester offered (e.g., "Fall 2025")
-  description String?               // Optional: Course description
+  code        String   @unique
+  name        String
+  credits     Int
+  instructor  String?
+  semester    String?
+  description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@map("courses")  // Database table name will be "courses"
-  status    HomeworkStatus @default(todo)
-  createdAt DateTime       @default(now())
+  @@map("courses")
 }
 
 model Note {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   courseId  String
   title     String
   body      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime?
-  pinned    Boolean  @default(false)
+  pinned    Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  // Clerk user ID (e.g., "user_...")
+  userId    String?
+
+  @@index([userId])
+  @@index([courseId])
+  @@index([pinned])
 }

@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { requireAuth } from "../middleware/auth";
 import {
   addNote,
   editNote,
@@ -13,6 +14,9 @@ import {
 } from "../middleware/validateNote";
 
 const router = Router();
+
+// All note routes are user-scoped and require a valid Clerk session
+router.use(requireAuth);
 
 router.get("/", getNotes);
 router.get("/:id", validateNoteId, getNote);

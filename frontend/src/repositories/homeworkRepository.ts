@@ -1,5 +1,6 @@
 import type { Repository } from './baseRepository';
 import type { Homework } from '../types/Homework';
+import { authFetch } from '../lib/authFetch';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
 const BASE = `${API}/api/v1/homework`;
@@ -9,12 +10,12 @@ function normalizeDueDate(v: string) {
 }
 
 async function http<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
-    const res = await fetch(input, init);
+    const res = await authFetch(input, init);
     if (!res.ok) {
         const text = await res.text().catch(() => '');
         throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` — ${text}` : ''}`);
     }
-    if (res.status === 204) return undefined as unknown as T; // DELETE 204
+    if (res.status === 204) return undefined as unknown as T;
     return (await res.json()) as T;
 }
 
@@ -24,7 +25,6 @@ export const homeworkRepository: Repository<Homework> = {
     },
 
     async get(id) {
-        // No GET /:id route yet; fetch-and-filter
         const all = await http<Homework[]>(BASE);
         return all.find(h => h.id === id);
     },
