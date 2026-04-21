@@ -10,20 +10,43 @@ import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
 
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+// Allow multiple origins (production + preview) via comma-separated env var
+const allowedOrigins = (process.env.FRONTEND_URLS ?? process.env.FRONTEND_URL ?? 'http://localhost:5173')
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+
+const corsOptions: cors.CorsOptions = {
+    origin: (origin, cb) => {
+        // allow non-browser tools (curl/postman) with no Origin header
+        if (!origin) return cb(null, true);
+
+        // allow list match
+        if (allowedOrigins.includes(origin)) return cb(null, true);
+
+        // allow Vercel preview URLs for your project (optional but useful)
+        if (origin.endsWith('.vercel.app') && origin.includes('full-stack-dev-student-tracker')) {
+            return cb(null, true);
+        }
+
+        return cb(new Error('CORS blocked'), false);
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // ✅ respond to preflight
+
 app.use(express.json());
 
-// Clerk middleware attaches auth info to requests; protected routes should use requireAuth. [2](https://shadowsmith.com/thoughts/how-to-deploy-an-express-api-to-vercel)
+// Clerk middleware attaches auth info to requests; protected routes should use requireAuth().
 app.use(clerkMiddleware());
 
 app.get('/', (_req, res) => res.send('Student Tracker API is running'));
 app.get('/api/health', (_req, res) =>
-  res.json({ status: 'healthy', timestamp: new Date().toISOString() }),
+    res.json({ status: 'healthy', timestamp: new Date().toISOString() }),
 );
 
 app.use('/api/v1/courses', coursesRoutes);
