@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useAuth } from '@clerk/clerk-react';
 import type { Homework } from '../types/Homework';
 import { filterSortHomework } from '../services/homeworkService';
 import { homeworkRepository } from '../repositories/homeworkRepository';
@@ -22,9 +23,12 @@ export function useHomework(
         sort?: 'dueDate' | 'createdAt';
     } = { status: 'all', sort: 'dueDate' },
 ) {
+    const { isLoaded, isSignedIn } = useAuth();
+
     const [all, setAll] = useState<Homework[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | undefined>(undefined);
+
     const [courseId, setCourseId] = useState(initial.courseId);
     const [status, setStatusFilter] = useState<StatusFilter>(initial.status ?? 'all');
     const [q, setQ] = useState(initial.q ?? '');
@@ -33,13 +37,30 @@ export function useHomework(
     useEffect(() => {
         let cancelled = false;
 
+        // Signed-in only behavior: wait for Clerk to be ready
+        if (!isLoaded) {
+            setLoading(true);
+            setError(undefined);
+            return () => {
+                cancelled = true;
+            };
+        }
+
+        if (!isSignedIn) {
+            setLoading(false);
+            setAll([]);
+            setError('Sign in to view assignments');
+            return () => {
+                cancelled = true;
+            };
+        }
+
         (async () => {
             setLoading(true);
             setError(undefined);
 
             try {
                 const items = await homeworkRepository.list();
-
                 const uiItems = items.map((h) => ({
                     ...h,
                     status: toUiStatus(h.status as HomeworkStatusApi),
@@ -56,7 +77,7 @@ export function useHomework(
         return () => {
             cancelled = true;
         };
-    }, []);
+    }, [isLoaded, isSignedIn]);
 
     const list = useMemo(
         () => filterSortHomework(all, { courseId, status, q, sort }),
@@ -64,6 +85,8 @@ export function useHomework(
     );
 
     async function refresh() {
+        if (!isLoaded || !isSignedIn) return;
+
         const items = await homeworkRepository.list();
         const uiItems = items.map((h) => ({
             ...h,
@@ -73,11 +96,15 @@ export function useHomework(
     }
 
     async function setItemStatus(id: string, next: HomeworkStatusUi) {
+        if (!isLoaded || !isSignedIn) return;
+
         await homeworkRepository.update(id, { status: toApiStatus(next) } as any);
         await refresh();
     }
 
     async function add(input: Omit<Homework, 'id' | 'createdAt'>) {
+        if (!isLoaded || !isSignedIn) return;
+
         const payload: any = { ...input };
         if (payload.status) payload.status = toApiStatus(payload.status);
         await homeworkRepository.create(payload);
@@ -85,6 +112,8 @@ export function useHomework(
     }
 
     async function remove(id: string) {
+        if (!isLoaded || !isSignedIn) return;
+
         await homeworkRepository.remove(id);
         await refresh();
     }

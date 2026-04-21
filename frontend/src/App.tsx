@@ -1,5 +1,5 @@
-// src/App.tsx
-import { useEffect } from 'react';
+// frontend/src/App.tsx
+import { useLayoutEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
 import Layout from './components/Layout';
@@ -11,12 +11,15 @@ import { CourseProvider } from './context/CourseContext';
 import { registerTokenGetter } from './lib/authFetch';
 
 export default function App() {
-  const { getToken } = useAuth();
+  const { getToken, isLoaded, isSignedIn } = useAuth();
 
-  // Make the Clerk session token available to repository fetch calls
-  useEffect(() => {
-    registerTokenGetter(getToken);
-  }, [getToken]);
+  // Register as early as possible so child hooks don't fetch before token getter is ready
+  useLayoutEffect(() => {
+    registerTokenGetter(async () => {
+      if (!isLoaded || !isSignedIn) return null;
+      return await getToken();
+    });
+  }, [getToken, isLoaded, isSignedIn]);
 
   return (
     <CourseProvider>
