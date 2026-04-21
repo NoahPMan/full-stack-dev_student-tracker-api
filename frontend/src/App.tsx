@@ -1,5 +1,5 @@
 // frontend/src/App.tsx
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
 import Layout from './components/Layout';
@@ -13,7 +13,8 @@ import { registerTokenGetter } from './lib/authFetch';
 export default function App() {
   const { getToken, isLoaded, isSignedIn } = useAuth();
 
-  useEffect(() => {
+  // Register as early as possible so child hooks don't fetch before token getter is ready
+  useLayoutEffect(() => {
     registerTokenGetter(async () => {
       if (!isLoaded || !isSignedIn) return null;
       return await getToken();
