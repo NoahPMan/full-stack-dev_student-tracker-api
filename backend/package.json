@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "vercel-build": "prisma migrate deploy && prisma generate && npm run build",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@clerk/express": "^2.1.5",
