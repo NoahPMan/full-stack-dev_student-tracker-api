@@ -138,3 +138,110 @@ Our feature pages were planned and built collaboratively, with all team members 
 - T.3 Back-end User Management - _Adam_
 - T.4 User Login/Registration - _Adam_
 - I.1 Custom User-Associated Data and Session Management for Notes - _Adam_
+
+---
+
+Sprint 5
+Local Setup (T.5)
+
+Prerequisites
+
+Node.js 18+
+Docker Desktop (for local PostgreSQL via Docker Compose)
+A Clerk app (Publishable + Secret keys) [clerk.com]
+
+Environment Variables
+
+
+Frontend (frontend/.env.local)
+
+
+Vite exposes environment variables to the browser only if they start with VITE_ and they are available at import.meta.env.
+
+Create frontend/.env.local:
+
+VITE_API_BASE_URL=http://localhost:3001
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key
+
+Backend (backend/.env)
+
+
+Create backend/.env:
+
+PORT=3001
+
+# Local database (Docker)
+
+DATABASE_URL=postgresql://postgres:password@localhost:5434/student_tracker_dev
+
+# Clerk (server-side)
+
+CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key
+CLERK_SECRET_KEY=sk_test_your_clerk_secret_key
+
+# CORS allowlist for frontend origin (local)
+
+FRONTEND_URL=http://localhost:5173
+
+# Optional: allow multiple origins (comma-separated)
+
+# FRONTEND_URLS=http://localhost:5173,https://full-stack-dev-student-tracker-api.vercel.app
+
+Running Locally
+
+
+1. Install project dependencies
+From the repo root:
+
+
+npm install
+
+2. Start the local database (Docker)
+From the repo root (where docker-compose.yml lives):
+
+docker compose up -d
+
+Stop it:
+
+docker compose down
+
+3. Run Prisma migrations + generate client
+From backend/:
+
+cd backend
+npx prisma migrate dev
+npx prisma generate
+
+
+If the database already exists, Prisma may report no pending migrations.
+
+4. Start the backend
+From backend/:
+
+npm run dev
+
+5. Start the frontend
+In a second terminal:
+
+cd frontend
+npm run dev
+
+
+Local URLs
+
+
+Frontend: http://localhost:5173
+Backend: http://localhost:3001
+
+
+Open the frontend URL in your browser after both servers are running.
+
+
+Notes
+
+
+- Run frontend and backend in separate terminals.
+- If Clerk keys are missing or invalid, authentication pages may not load correctly.
+- Make sure the Docker container is running before starting the backend.
+- If a port is already in use, close any existing local servers first.
+- To stop the frontend/backend servers, press Ctrl + C in each terminal.
