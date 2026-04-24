@@ -137,7 +137,10 @@ Our feature pages were planned and built collaboratively, with all team members 
 - T.1 Clerk setup - _Adam_
 - T.3 Back-end User Management - _Adam_
 - T.4 User Login/Registration - _Adam_
+- T.5 Local Setup Instructions - Noah, Kaeden
 - I.1 Custom User-Associated Data and Session Management for Notes - _Adam_
+- I.1 Custom User-Associated Data and Session Management for Homework - Kaeden
+
 
 ---
 
