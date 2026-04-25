@@ -21,11 +21,11 @@ async function http<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
 
 export const homeworkRepository: Repository<Homework> = {
     async list() {
-        return http<Homework[]>(BASE);
+        return http<Homework[]>(`${BASE}/mine`);
     },
 
     async get(id) {
-        const all = await http<Homework[]>(BASE);
+        const all = await http<Homework[]>(`${BASE}/mine`);
         return all.find(h => h.id === id);
     },
 
