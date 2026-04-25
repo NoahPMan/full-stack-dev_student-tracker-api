@@ -132,7 +132,15 @@ Our feature pages were planned and built collaboratively, with all team members 
 
 ## Sprint 5
 
-### Team Contributions
+## Team Contributions
+
+- T.1 Clerk setup - Adam
+- T.3 Back-end User Management - Adam
+- T.4 User Login/Registration - Adam
+- T.5 Local Setup Instructions - Noah, Kaeden
+- I.1 Custom User-Associated Data and Session Management for Notes - Adam
+- I.1 Custom User-Associated Data and Session Management for Homework - Kaeden
+- I.2 Project Retrospective and Documentation - Adam, Noah, Kaeden
 
 **Team Requirements**
 - **T.1 Clerk setup** — _Adam_
