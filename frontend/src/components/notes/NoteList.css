@@ -1,152 +1,260 @@
-:root {
-    --card-bg: #1e2530;
-    --card-bg-hover: #232b38;
-    --card-border: #2f3a4a;
-    --text: #e7eef7;
-    --muted: #98a6b8;
-    --pin: #e9b949;
-    --danger: #ff5d5d;
-    --ring: #6aa0ff;
-}
+/* =========================
+   Notes List + Cards
+   Theme: Midnight + Mint
+   ========================= */
 
-/* Sections & grid */
+/* Section wrapper */
 .notes-section {
-    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 }
 
+/* Section headings (Pinned / Others) */
 .notes-section__heading {
-    margin: 1rem 0 0.5rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--muted);
+    margin: 6px 0 0;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    letter-spacing: 0.02em;
-}
-
-.notes-grid {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 0.75rem 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 12px;
-}
-
-/* Card */
-.note-card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 10px;
-    padding: 12px;
-    color: var(--text);
-    transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .15);
-}
-
-.note-card:hover {
-    background: var(--card-bg-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, .18);
-}
-
-.note-card__header {
-    display: grid;
-    grid-template-columns: 32px 1fr 32px;
-    align-items: center;
-    gap: 8px;
-}
-
-.note-card__title {
-    margin: 0;
-    font-size: 0.98rem;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.note-card__body {
-    margin: 8px 0 0;
-    line-height: 1.35;
-    color: var(--text);
-    word-wrap: anywhere;
-}
-
-.note-card__footer {
-    margin-top: 10px;
-    font-size: 0.8rem;
     color: var(--muted);
-}
-
-/* Icon buttons */
-.icon-btn {
-    width: 32px;
-    height: 32px;
-    display: grid;
-    place-items: center;
-    border-radius: 8px;
-    background: transparent;
-    border: 1px solid var(--card-border);
-    color: var(--muted);
-    cursor: pointer;
-    transition: background 120ms ease, color 120ms ease, border-color 120ms ease, transform 80ms ease;
-}
-
-.icon-btn:hover {
-    background: rgba(255, 255, 255, .04);
-    color: var(--text);
-}
-
-.icon-btn:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 2px var(--ring);
-}
-
-.icon {
-    width: 16px;
-    height: 16px;
-    fill: currentColor;
-}
-
-/* Pin state */
-.icon-btn.pin.is-active {
-    color: var(--pin);
-    border-color: rgba(233, 185, 73, .35);
-}
-
-/* Danger button */
-.icon-btn.danger {
-    color: #ff8383;
-    border-color: rgba(255, 93, 93, .28);
-}
-
-.icon-btn.danger:hover {
-    background: rgba(255, 93, 93, .08);
-    color: var(--danger);
+    font-weight: 900;
 }
 
 /* Empty state */
 .notes-empty {
     display: grid;
     place-items: center;
-    padding: 3rem 1rem;
-    border: 1px dashed var(--card-border);
-    border-radius: 10px;
-    background: rgba(255, 255, 255, .02);
-    color: var(--muted);
+    text-align: center;
+    padding: 22px 14px;
+    border-radius: var(--radius);
+    border: 1px dashed rgba(226, 232, 240, 0.9);
+    background: rgba(15, 23, 42, 0.03);
 }
 
 .notes-empty__icon {
-    font-size: 1.6rem;
-    margin-bottom: 0.4rem;
+    font-size: 1.8rem;
+    margin-bottom: 6px;
 }
 
 .notes-empty__title {
-    margin: 0 0 0.1rem 0;
-    font-weight: 600;
+    margin: 0;
+    font-weight: 900;
     color: var(--text);
 }
 
 .notes-empty__hint {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-weight: 650;
+}
+
+/* Notes grid */
+.notes-grid {
+    list-style: none;
+    padding: 0;
     margin: 0;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+/* Card base */
+.note-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 12px 12px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform 120ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.note-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(16, 185, 129, 0.30);
+}
+
+/* Pinned highlight */
+.note-card--pinned {
+    border-color: rgba(16, 185, 129, 0.55);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12), var(--shadow-sm);
+}
+
+/* Card header (pin + title + actions) */
+.note-card__header {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Title */
+.note-card__title {
+    margin: 0;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+    font-weight: 950;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Body */
+.note-card__body {
+    margin: 0;
+    color: var(--muted);
+    font-weight: 650;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* Footer date */
+.note-card__footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.note-card__footer time {
+    display: inline-flex;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: rgba(15, 23, 42, 0.03);
+    color: var(--muted);
+    font-weight: 750;
+    font-size: 0.9rem;
+}
+
+/* Icon buttons (pin/edit/delete) */
+.icon-btn {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(15, 23, 42, 0.03);
+    color: var(--text);
+    transition: transform 120ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.icon-btn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(16, 185, 129, 0.30);
+    box-shadow: var(--shadow-sm);
+    background: rgba(16, 185, 129, 0.10);
+}
+
+.icon-btn:active {
+    transform: translateY(0px);
+}
+
+.icon-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focus), var(--shadow-sm);
+    border-color: rgba(16, 185, 129, 0.55);
+}
+
+.icon-btn.danger {
+    background: rgba(239, 68, 68, 0.10);
+    border-color: rgba(239, 68, 68, 0.35);
+    color: #991b1b;
+}
+
+.icon-btn.danger:hover {
+    border-color: rgba(239, 68, 68, 0.55);
+    background: rgba(239, 68, 68, 0.12);
+}
+
+/* Pin button special state */
+.icon-btn.pin.is-active {
+    background: rgba(16, 185, 129, 0.16);
+    border-color: rgba(16, 185, 129, 0.55);
+}
+
+/* SVG sizing */
+.icon {
+    width: 18px;
+    height: 18px;
+    display: block;
+    fill: currentColor;
+}
+
+/* ===== Edit mode ===== */
+.note-card__edit {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.note-card__edit-title,
+.note-card__edit-body {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 1px 2px rgba(2, 6, 23, 0.04);
+}
+
+.note-card__edit-body {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.note-card__edit-title:focus,
+.note-card__edit-body:focus {
+    outline: none;
+    border-color: rgba(16, 185, 129, 0.55);
+    box-shadow: var(--focus);
+}
+
+.note-card__edit-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+/* Save / Cancel buttons inside edit mode */
+.note-card__edit-actions button {
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-weight: 900;
+    border: 1px solid transparent;
+    transition: transform 120ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+/* Save (primary) */
+.note-card__edit-actions button:first-child {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #06251a;
+}
+
+.note-card__edit-actions button:first-child:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Cancel (secondary) */
+.note-card__edit-actions button.secondary {
+    background: rgba(15, 23, 42, 0.04);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+.note-card__edit-actions button.secondary:hover {
+    transform: translateY(-1px);
+    border-color: rgba(16, 185, 129, 0.30);
+    box-shadow: var(--shadow-sm);
 }

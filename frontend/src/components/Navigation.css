@@ -1,101 +1,103 @@
+/* Navigation container */
 .navigation {
-  background-color: #34495e;
-  width: 100%;
-  box-sizing: border-box;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(180deg, var(--brand-2), rgba(17, 28, 47, 0.92));
+  border-bottom: 1px solid rgba(226, 232, 240, 0.12);
 }
 
+/* 2x2 dashboard grid */
 .nav-list {
   list-style: none;
   margin: 0;
-  padding: 0;
-
-  display: flex;
-  width: 100%;
-  align-items: stretch;
-
-  justify-content: space-between;
+  padding: 14px 14px 16px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
+/* Each tile wrapper */
 .nav-item {
-  flex: 1;
-  min-width: 0;
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 0;
 }
 
-.nav-item:first-child {
-  border-left: none;
-}
-
+/* Tile button */
 .nav-button {
-  width: 100%;
-  height: 52px;
-
-  background: none;
-  border: none;
-  color: #ecf0f1;
-
-  cursor: pointer;
-
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
 
-  font-size: 1rem;
-  font-weight: 600;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
 
-  transition:
-    background-color 0.2s,
-    color 0.2s;
-  border-bottom: 3px solid transparent;
+  gap: 8px;
+  padding: 18px 12px;
 
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  border-radius: 16px;
+  border: 1px solid rgba(226, 232, 240, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+
+  color: var(--on-brand);
+  text-decoration: none; /* keep underlines OFF */
+  box-shadow: 0 1px 2px rgba(2, 6, 23, 0.22);
+
+  transition: transform 120ms ease, background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
+/* Hover = “lift” */
 .nav-button:hover {
-  background-color: #2c3e50;
-  color: #3498db;
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(16, 185, 129, 0.30);
+  box-shadow: 0 10px 20px rgba(2, 6, 23, 0.25);
 }
 
-.nav-button.active {
-  background-color: #2c3e50;
-  color: #3498db;
-  border-bottom-color: #3498db;
+/* Active route = mint accent */
+.nav-button--active {
+  background: rgba(16, 185, 129, 0.14);
+  border-color: rgba(16, 185, 129, 0.55);
+  box-shadow: 0 12px 24px rgba(2, 6, 23, 0.28);
+  position: relative;
+  background: linear-gradient(180deg, rgba(16,185,129,0.18), rgba(16,185,129,0.10));
 }
 
+/* Mint “active bar” */
+.nav-button--active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 14px;
+  right: 14px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), rgba(16, 185, 129, 0.55));
+}
+
+/* Icon */
 .nav-icon {
-  font-size: 1.2rem;
+  font-size: 1.7rem;
   line-height: 1;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.22));
 }
 
+/* Label */
 .nav-text {
-  font-size: 0.95rem;
-  line-height: 1;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  opacity: 0.98;
 }
 
-@media (max-width: 600px) {
+/* Keyboard focus */
+.nav-button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus), 0 10px 20px rgba(2, 6, 23, 0.22);
+}
+
+/* Responsive: single row on wide screens */
+@media (min-width: 900px) {
   .nav-list {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .nav-item {
-    flex: 1 1 50%;
-    border-left: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .nav-button {
-    height: 56px;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 0.75rem 0.5rem;
-  }
-
-  .nav-text {
-    font-size: 0.85rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 14px 20px 16px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }

@@ -1,12 +1,12 @@
-import { useMemo, useState } from 'react';
-import useFormField from '../../hooks/useFormField';
-import { useHomework } from '../../hooks/useHomework';
-import './HomeworkList.css';
+import { useMemo, useState } from "react";
+import useFormField from "../../hooks/useFormField";
+import { useHomework, type UseHomeworkApi } from "../../hooks/useHomework";
+import "./HomeworkList.css";
 
-type HomeworkStatus = 'todo' | 'in-progress' | 'done';
+type HomeworkStatus = "todo" | "in-progress" | "done";
 
 function StatusBadge({ status }: { status: HomeworkStatus }) {
-  return <span className={`badge badge--${status}`}>{status.replace('-', ' ')}</span>;
+  return <span className={`badge badge--${status}`}>{status.replace("-", " ")}</span>;
 }
 
 function HomeworkCard({
@@ -30,20 +30,19 @@ function HomeworkCard({
   onRemove: (id: string) => void;
 }) {
   const fmt = (isoOrYmd: string) => {
-    // supports "YYYY-MM-DD" or ISO
     const d = isoOrYmd.length === 10 ? new Date(`${isoOrYmd}T00:00:00.000Z`) : new Date(isoOrYmd);
-    return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
   };
 
   const statusActionLabel =
-    item.status === 'todo'
-      ? 'Start (In progress)'
-      : item.status === 'in-progress'
-      ? 'Mark Done'
-      : 'Reopen (To do)';
+    item.status === "todo"
+      ? "Start (In progress)"
+      : item.status === "in-progress"
+      ? "Mark Done"
+      : "Reopen (To do)";
 
   const nextStatus: HomeworkStatus =
-    item.status === 'todo' ? 'in-progress' : item.status === 'in-progress' ? 'done' : 'todo';
+    item.status === "todo" ? "in-progress" : item.status === "in-progress" ? "done" : "todo";
 
   return (
     <article className="homework-card">
@@ -72,7 +71,7 @@ function HomeworkCard({
             className="btn btn--ghost"
             onClick={() => onToggleExpand(item.id)}
           >
-            {isExpanded ? 'Hide details' : 'Show details'}
+            {isExpanded ? "Hide details" : "Show details"}
           </button>
 
           <button
@@ -110,23 +109,33 @@ function HomeworkCard({
   );
 }
 
-function HomeworkForm({ onAdd }: { onAdd: (input: { title: string; courseId: string; dueDate: string }) => void }) {
-  const title = useFormField('');
-  const courseId = useFormField('');
-  const dueDate = useFormField('');
+function HomeworkForm({
+  activeCourseId,
+  onAdd,
+}: {
+  activeCourseId?: string;
+  onAdd: (input: { title: string; courseId: string; dueDate: string }) => void;
+}) {
+  const title = useFormField("");
+  const dueDate = useFormField("");
+
+  const canSubmit =
+    !!activeCourseId &&
+    title.value.trim().length > 0 &&
+    dueDate.value.trim().length > 0;
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.value.trim() || !courseId.value.trim() || !dueDate.value.trim()) return;
+    if (!activeCourseId) return;
+    if (!title.value.trim() || !dueDate.value.trim()) return;
 
     onAdd({
       title: title.value.trim(),
-      courseId: courseId.value.trim(),
-      dueDate: dueDate.value.trim(), // "yyyy-mm-dd" is fine; backend normalizes
+      courseId: activeCourseId, // selected course from above
+      dueDate: dueDate.value.trim(),
     });
 
     title.reset();
-    courseId.reset();
     dueDate.reset();
   };
 
@@ -138,32 +147,41 @@ function HomeworkForm({ onAdd }: { onAdd: (input: { title: string; courseId: str
         placeholder="Homework title"
         required
       />
-      <input
-        value={courseId.value}
-        onChange={(e) => courseId.onChange(e.target.value)}
-        placeholder="Course code"
-        required
-      />
+
       <input
         type="date"
         value={dueDate.value}
         onChange={(e) => dueDate.onChange(e.target.value)}
         required
       />
-      <button type="submit">Add</button>
+
+      <button type="submit" disabled={!canSubmit} aria-disabled={!canSubmit}>
+        Add
+      </button>
+
+      {!activeCourseId && (
+        <p className="hw-form__hint">Select a course above to add an assignment.</p>
+      )}
     </form>
   );
 }
 
-export default function HomeworkList({ heading = 'Assignments' }: { heading?: string }) {
-  const hw = useHomework(); // uses backend repo inside your hook/service
+export default function HomeworkList({
+  hw: hwProp,
+  activeCourseId,
+}: {
+  hw?: UseHomeworkApi;
+  activeCourseId?: string;
+}) {
+  // use passed instance for real-time dashboard updates
+  const hw = hwProp ?? useHomework();
+
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<'all' | HomeworkStatus>('all');
+  const [statusFilter, setStatusFilter] = useState<"all" | HomeworkStatus>("all");
 
   const filteredSorted = useMemo(() => {
-    const out = hw.list.filter((it) => (statusFilter === 'all' ? true : it.status === statusFilter));
-    // sort by due date ascending
-    return [...out].sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+    const out = hw.list.filter((it: any) => (statusFilter === "all" ? true : it.status === statusFilter));
+    return [...out].sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
   }, [hw.list, statusFilter]);
 
   async function onAdd(input: { title: string; courseId: string; dueDate: string }) {
@@ -171,8 +189,8 @@ export default function HomeworkList({ heading = 'Assignments' }: { heading?: st
   }
 
   async function onSetStatus(id: string, next: HomeworkStatus) {
-    if (next === 'todo') await hw.toTodo(id);
-    else if (next === 'in-progress') await hw.toInProgress(id);
+    if (next === "todo") await hw.toTodo(id);
+    else if (next === "in-progress") await hw.toInProgress(id);
     else await hw.toDone(id);
   }
 
@@ -183,36 +201,36 @@ export default function HomeworkList({ heading = 'Assignments' }: { heading?: st
   return (
     <section className="homework-list">
       <header className="homework-list__header">
-        <h2>{heading}</h2>
+        <h2>Assignments</h2>
         <p className="homework-list__summary">
-          {filteredSorted.length} {filteredSorted.length === 1 ? 'item' : 'items'}
+          {filteredSorted.length} {filteredSorted.length === 1 ? "item" : "items"}
         </p>
       </header>
 
-      {hw.loading && <p>Loading assignments...</p>}
-      {hw.error && <p style={{ color: 'red' }}>{hw.error}</p>}
+      {hw.loading && <p className="homework-list__msg">Loading assignments...</p>}
+      {hw.error && <p className="homework-list__error">{hw.error}</p>}
 
-      <HomeworkForm onAdd={onAdd} />
+      <HomeworkForm activeCourseId={activeCourseId} onAdd={onAdd} />
 
       <div className="homework-list__toolbar">
-        {(['all', 'todo', 'in-progress', 'done'] as const).map((opt) => (
+        {(["all", "todo", "in-progress", "done"] as const).map((opt) => (
           <button
             key={opt}
             type="button"
-            className={`chip ${statusFilter === opt ? 'chip--active' : ''}`}
+            className={`chip ${statusFilter === opt ? "chip--active" : ""}`}
             onClick={() => setStatusFilter(opt)}
             aria-pressed={statusFilter === opt}
           >
-            {opt === 'all' ? 'All' : opt.replace('-', ' ')}
+            {opt === "all" ? "All" : opt.replace("-", " ")}
           </button>
         ))}
       </div>
 
       <ol className="homework-list__items">
-        {filteredSorted.map((hwItem) => (
+        {filteredSorted.map((hwItem: any) => (
           <li key={hwItem.id} className="homework-list__item">
             <HomeworkCard
-              item={hwItem as any}
+              item={hwItem}
               isExpanded={expandedId === hwItem.id}
               onToggleExpand={(id) => setExpandedId((prev) => (prev === id ? null : id))}
               onSetStatus={onSetStatus}

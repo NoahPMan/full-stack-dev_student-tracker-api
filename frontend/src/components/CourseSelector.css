@@ -1,30 +1,116 @@
+.course-clear:hover {
+  transform: translateY(-1px);
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: var(--shadow-md);
+}
+
+.course-clear:active {
+  transform: translateY(0px);
+}
+
+.course-clear:focus-visible {
+  outline: none;
+  box-shadow: var(--focus), var(--shadow-md);
+  border-color: rgba(16, 185, 129, 0.55);
+}
+
 .course-buttons {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  margin-top: 12px;
+  margin-top: 4px;
 }
 
+/* Base pill */
 .course-button {
-  background: #111;
-  color: white;
-  border: 2px solid transparent;
-  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  /* pill */
   padding: 10px 16px;
   cursor: pointer;
-  transition: transform 0.05s ease, border-color 0.15s ease, background-color 0.15s ease;
+  font-weight: 850;
+  letter-spacing: 0.01em;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 120ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease;
 }
 
 .course-button:hover {
   transform: translateY(-1px);
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: var(--shadow-md);
 }
 
+.course-button:active {
+  transform: translateY(0px);
+}
+
+.course-button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus), var(--shadow-md);
+  border-color: rgba(16, 185, 129, 0.55);
+}
+
+/* Active pill */
 .course-button.active {
-  background: #0b5ed7;
-  border-color: #084298;
-  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+  background: var(--accent-soft);
+  border-color: rgba(16, 185, 129, 0.60);
+  box-shadow: var(--focus), var(--shadow-md);
+}
+
+.course-button:disabled {
+  cursor: default;
+  opacity: 1;
 }
 
 .course-button.active:hover {
   transform: none;
+  background: rgba(16, 185, 129, 0.18);
+  border-color: rgba(16, 185, 129, 0.75);
+}
+
+/* Tiny screens */
+@media (max-width: 380px) {
+  .course-button {
+    padding: 9px 12px;
+  }
+}
+
+.course-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* "Active Course: ..." label */
+.course-label {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+.course-label strong {
+  color: var(--text);
+  font-weight: 900;
+}
+
+/* Clear button */
+.course-clear {
+  width: fit-content;
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 9px 12px;
+  font-weight: 850;
+  letter-spacing: 0.01em;
+  box-shadow: var(--shadow-sm);
 }
