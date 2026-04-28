@@ -6,10 +6,10 @@ export default function CourseSelector({ showQuickButtons = true }: { showQuickB
 
   // Map course IDs to display names
   const courses = [
-    { id: 'c101', label: 'Web Dev' },
-    { id: 'c102', label: 'Databases' },
-    { id: 'c103', label: 'Networking' },
-    { id: 'c104', label: 'Software Architecture' },
+    { id: 'C-101', label: 'Web Dev' },
+    { id: 'C-102', label: 'Databases' },
+    { id: 'C-103', label: 'Networking' },
+    { id: 'C-104', label: 'Software Architecture' },
   ];
 
   const activeCourse = selectedCourseId;
