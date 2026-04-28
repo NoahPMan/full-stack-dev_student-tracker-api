@@ -158,6 +158,9 @@ Our feature pages were planned and built collaboratively, with all team members 
 Sprint 5
 Local Setup (T.5)
 
+Vercel Page:
+https://full-stack-dev-student-tracker-api.vercel.app/
+
 Prerequisites
 
 Node.js 18+
