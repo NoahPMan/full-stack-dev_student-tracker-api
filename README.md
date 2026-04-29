@@ -153,6 +153,8 @@ Our feature pages were planned and built collaboratively, with all team members 
 - **I.1 Custom User-Associated Data and Session Management (Notes)** — _Adam_, _Noah_, _Kaeden_
 - **I.2 Project Retrospective and Documentation** — _Adam_, _Noah_, _Kaeden_
 
+**Optional Requirements***
+- **O.1 Additional/Refined Features** - _Noah_
 ---
 
 Sprint 5
