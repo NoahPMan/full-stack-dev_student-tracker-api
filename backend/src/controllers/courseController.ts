@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../db/prisma';
+import type { Request, Response, NextFunction } from "express";
+import { prisma } from "../db/prisma";
 
 function paramId(req: Request): string {
   const v = req.params.id;
@@ -7,20 +7,20 @@ function paramId(req: Request): string {
 }
 
 function userId(req: Request): string {
-  if (!req.userId) {
-    // requireAuth should prevent this
-    throw new Error('Unauthorized');
-  }
+  if (!req.userId) throw new Error("Unauthorized");
   return req.userId;
 }
 
 export const getAllCourses = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    res.setHeader("X-Course-Handler", "credits-optional-v2");
+
     const uid = userId(req);
     const courses = await prisma.course.findMany({
       where: { userId: uid },
-      orderBy: { code: 'asc' },
+      orderBy: { code: "asc" },
     });
+
     res.json({ success: true, count: courses.length, data: courses });
   } catch (err) {
     next(err);
@@ -29,12 +29,13 @@ export const getAllCourses = async (req: Request, res: Response, next: NextFunct
 
 export const getCourseById = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    res.setHeader("X-Course-Handler", "credits-optional-v2");
+
     const uid = userId(req);
     const id = paramId(req);
 
     const course = await prisma.course.findFirst({ where: { id, userId: uid } });
-
-    if (!course) return res.status(404).json({ success: false, error: 'Course not found' });
+    if (!course) return res.status(404).json({ success: false, error: "Course not found" });
 
     res.json({ success: true, data: course });
   } catch (err) {
@@ -44,31 +45,31 @@ export const getCourseById = async (req: Request, res: Response, next: NextFunct
 
 export const createCourse = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    res.setHeader("X-Course-Handler", "credits-optional-v2");
+
     const uid = userId(req);
     const { code, name, credits, instructor, semester, description } = req.body ?? {};
 
-    const cleanCode = String(code ?? '').trim();
-    const cleanName = String(name ?? '').trim();
+    const cleanCode = String(code ?? "").trim();
+    const cleanName = String(name ?? "").trim();
 
     if (!cleanCode || !cleanName) {
-      return res.status(400).json({ success: false, error: 'code and name are required' });
+      return res.status(400).json({ success: false, error: "code and name are required" });
     }
 
-    // credits optional now
     const parsedCredits =
-      credits === undefined || credits === null || credits === ''
+      credits === undefined || credits === null || credits === ""
         ? null
         : Number(credits);
 
     if (parsedCredits !== null && (Number.isNaN(parsedCredits) || parsedCredits < 0 || parsedCredits > 30)) {
-      return res.status(400).json({ success: false, error: 'Credits must be a valid number (0-30)' });
+      return res.status(400).json({ success: false, error: "Credits must be a valid number (0-30)" });
     }
 
     if (cleanName.length < 3) {
-      return res.status(400).json({ success: false, error: 'Course name must be at least 3 characters' });
+      return res.status(400).json({ success: false, error: "Course name must be at least 3 characters" });
     }
 
-    // unique per user (userId, code)
     const existing = await prisma.course.findUnique({
       where: { userId_code: { userId: uid, code: cleanCode } },
     });
@@ -97,18 +98,20 @@ export const createCourse = async (req: Request, res: Response, next: NextFuncti
 
 export const updateCourse = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    res.setHeader("X-Course-Handler", "credits-optional-v2");
+
     const uid = userId(req);
     const id = paramId(req);
 
     const existing = await prisma.course.findFirst({ where: { id, userId: uid } });
-    if (!existing) return res.status(404).json({ success: false, error: 'Course not found' });
+    if (!existing) return res.status(404).json({ success: false, error: "Course not found" });
 
     const { code, name, credits, instructor, semester, description } = req.body ?? {};
     const updateData: Record<string, unknown> = {};
 
     if (code !== undefined) {
       const cleanCode = String(code).trim();
-      if (!cleanCode) return res.status(400).json({ success: false, error: 'code cannot be empty' });
+      if (!cleanCode) return res.status(400).json({ success: false, error: "code cannot be empty" });
 
       if (cleanCode !== existing.code) {
         const dup = await prisma.course.findUnique({
@@ -123,14 +126,16 @@ export const updateCourse = async (req: Request, res: Response, next: NextFuncti
 
     if (name !== undefined) {
       const cleanName = String(name).trim();
-      if (cleanName.length < 3) return res.status(400).json({ success: false, error: 'Course name must be at least 3 characters' });
+      if (cleanName.length < 3) {
+        return res.status(400).json({ success: false, error: "Course name must be at least 3 characters" });
+      }
       updateData.name = cleanName;
     }
 
     if (credits !== undefined) {
-      const parsedCredits = credits === null || credits === '' ? null : Number(credits);
+      const parsedCredits = credits === null || credits === "" ? null : Number(credits);
       if (parsedCredits !== null && (Number.isNaN(parsedCredits) || parsedCredits < 0 || parsedCredits > 30)) {
-        return res.status(400).json({ success: false, error: 'Credits must be a valid number (0-30)' });
+        return res.status(400).json({ success: false, error: "Credits must be a valid number (0-30)" });
       }
       updateData.credits = parsedCredits;
     }
@@ -146,14 +151,19 @@ export const updateCourse = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
-// for the delete confirmation modal
 export const getCourseSummary = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    res.setHeader("X-Course-Handler", "credits-optional-v2");
+
     const uid = userId(req);
     const id = paramId(req);
 
-    const course = await prisma.course.findFirst({ where: { id, userId: uid }, select: { id: true } });
-    if (!course) return res.status(404).json({ success: false, error: 'Course not found' });
+    const course = await prisma.course.findFirst({
+      where: { id, userId: uid },
+      select: { id: true },
+    });
+
+    if (!course) return res.status(404).json({ success: false, error: "Course not found" });
 
     const [assignmentsCount, notesCount] = await Promise.all([
       prisma.homework.count({ where: { userId: uid, courseId: id } }),
@@ -168,13 +178,14 @@ export const getCourseSummary = async (req: Request, res: Response, next: NextFu
 
 export const deleteCourse = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    res.setHeader("X-Course-Handler", "credits-optional-v2");
+
     const uid = userId(req);
     const id = paramId(req);
 
     const existing = await prisma.course.findFirst({ where: { id, userId: uid } });
-    if (!existing) return res.status(404).json({ success: false, error: 'Course not found' });
+    if (!existing) return res.status(404).json({ success: false, error: "Course not found" });
 
-    // delete course but keep content by unassigning it
     await prisma.$transaction(async (tx) => {
       await tx.homework.updateMany({
         where: { userId: uid, courseId: id },
@@ -197,8 +208,10 @@ export const deleteCourse = async (req: Request, res: Response, next: NextFuncti
 
 export const searchCourses = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    res.setHeader("X-Course-Handler", "credits-optional-v2");
+
     const uid = userId(req);
-    const q = String(req.query.q ?? '').trim();
+    const q = String(req.query.q ?? "").trim();
 
     if (!q) return res.status(400).json({ success: false, error: 'Search query parameter "q" is required' });
 
@@ -206,11 +219,11 @@ export const searchCourses = async (req: Request, res: Response, next: NextFunct
       where: {
         userId: uid,
         OR: [
-          { code: { contains: q, mode: 'insensitive' } },
-          { name: { contains: q, mode: 'insensitive' } },
+          { code: { contains: q, mode: "insensitive" } },
+          { name: { contains: q, mode: "insensitive" } },
         ],
       },
-      orderBy: { code: 'asc' },
+      orderBy: { code: "asc" },
     });
 
     res.json({ success: true, count: courses.length, query: q, data: courses });
