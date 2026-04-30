@@ -78,7 +78,7 @@ export default function Home() {
       </header>
 
       <div className="home-controls">
-        {/* ✅ Single source of truth for Active Course display */}
+        {/* Single source of truth for Active Course display */}
         <CourseSelector showQuickButtons={true} />
       </div>
 
@@ -138,7 +138,8 @@ export default function Home() {
             <h3>Quick tips</h3>
           </div>
           <ul className="home-tips">
-            <li>Pick a course to filter assignments and notes.</li>
+            <li>Start on the Courses page: add your classes first, then select one to begin tracking assignments and notes.</li>
+            <li>Deleting a course won’t delete your work: related assignments/notes stay saved and become <strong>Unassigned</strong>.</li>
             <li>Move work from Todo → In progress → Done.</li>
             <li>Pin important notes to keep them at the top.</li>
           </ul>
