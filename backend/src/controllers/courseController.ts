@@ -146,7 +146,7 @@ export const updateCourse = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
-// ✅ for the delete confirmation modal
+// for the delete confirmation modal
 export const getCourseSummary = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const uid = userId(req);
@@ -174,7 +174,7 @@ export const deleteCourse = async (req: Request, res: Response, next: NextFuncti
     const existing = await prisma.course.findFirst({ where: { id, userId: uid } });
     if (!existing) return res.status(404).json({ success: false, error: 'Course not found' });
 
-    // ✅ delete course but keep content by unassigning it
+    // delete course but keep content by unassigning it
     await prisma.$transaction(async (tx) => {
       await tx.homework.updateMany({
         where: { userId: uid, courseId: id },
