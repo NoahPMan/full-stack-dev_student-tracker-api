@@ -55,4 +55,12 @@ app.use('/api/v1/homework', homeworkRoutes);
 
 app.use(errorHandler);
 
+app.get("/api/version", (_req, res) => {
+  res.json({
+    commit: process.env.VERCEL_GIT_COMMIT_SHA ?? "local",
+    env: process.env.VERCEL_ENV ?? "local",
+    time: new Date().toISOString(),
+  });
+});
+
 export default app;
