@@ -7,8 +7,10 @@
   - Added the required column `userId` to the `courses` table without a default value. This is not possible if the table is not empty.
 
 */
--- DropIndex
-DROP INDEX "courses_code_key";
+
+-- Drop legacy UNIQUE on courses.code (may exist as a constraint OR an index)
+ALTER TABLE "courses" DROP CONSTRAINT IF EXISTS "courses_code_key";
+DROP INDEX IF EXISTS "courses_code_key";
 
 -- AlterTable
 ALTER TABLE "Homework" ALTER COLUMN "courseId" DROP NOT NULL,
@@ -18,9 +20,19 @@ ALTER COLUMN "userId" SET NOT NULL;
 ALTER TABLE "Note" ALTER COLUMN "courseId" DROP NOT NULL,
 ALTER COLUMN "userId" SET NOT NULL;
 
--- AlterTable
-ALTER TABLE "courses" ADD COLUMN     "userId" TEXT NOT NULL,
-ALTER COLUMN "credits" DROP NOT NULL;
+-- AlterTable (safe for non-empty tables)
+ALTER TABLE "courses"
+  ADD COLUMN IF NOT EXISTS "userId" TEXT,
+  ALTER COLUMN "credits" DROP NOT NULL;
+
+-- Backfill any existing rows so NOT NULL is possible
+UPDATE "courses"
+SET "userId" = 'legacy'
+WHERE "userId" IS NULL;
+
+-- Now enforce NOT NULL
+ALTER TABLE "courses"
+  ALTER COLUMN "userId" SET NOT NULL;
 
 -- CreateIndex
 CREATE INDEX "courses_userId_idx" ON "courses"("userId");
