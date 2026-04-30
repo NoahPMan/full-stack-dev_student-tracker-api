@@ -12,48 +12,58 @@ enum HomeworkStatus {
   done
 }
 
+model Course {
+  id          String   @id @default(uuid())
+  userId      String
+
+  code        String
+  name        String
+  credits     Int?
+  instructor  String?
+  semester    String?
+  description String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  homework    Homework[]
+  notes       Note[]
+
+  @@unique([userId, code])
+  @@index([userId])
+  @@map("courses")
+}
+
 model Homework {
   id          String         @id @default(cuid())
   title       String
   description String?
-  courseId    String
   dueDate     DateTime
   status      HomeworkStatus @default(todo)
   createdAt   DateTime       @default(now())
 
-  // Clerk user ID (e.g., "user_...")
-  userId      String?
+  userId      String
+
+  courseId    String?
+  course      Course?        @relation(fields: [courseId], references: [id])
 
   @@index([userId])
   @@index([courseId])
   @@index([dueDate])
 }
 
-model Course {
-  id          String   @id @default(uuid())
-  code        String   @unique
-  name        String
-  credits     Int
-  instructor  String?
-  semester    String?
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("courses")
-}
-
 model Note {
   id        String    @id @default(cuid())
-  courseId  String
   title     String
   body      String
   pinned    Boolean   @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 
-  // Clerk user ID (e.g., "user_...")
-  userId    String?
+  userId    String
+
+  courseId  String?
+  course    Course?   @relation(fields: [courseId], references: [id])
 
   @@index([userId])
   @@index([courseId])

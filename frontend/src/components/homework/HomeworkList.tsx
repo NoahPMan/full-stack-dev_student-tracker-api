@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import useFormField from "../../hooks/useFormField";
 import { useHomework, type UseHomeworkApi } from "../../hooks/useHomework";
+import { useCourses } from "../../hooks/useCourses";
 import "./HomeworkList.css";
 
 type HomeworkStatus = "todo" | "in-progress" | "done";
@@ -15,11 +16,12 @@ function HomeworkCard({
   onToggleExpand,
   onSetStatus,
   onRemove,
+  courseLabelFor,
 }: {
   item: {
     id: string;
     title: string;
-    courseId: string;
+    courseId: string | null;
     dueDate: string;
     status: HomeworkStatus;
     url?: string;
@@ -28,9 +30,13 @@ function HomeworkCard({
   onToggleExpand: (id: string) => void;
   onSetStatus: (id: string, next: HomeworkStatus) => void;
   onRemove: (id: string) => void;
+  courseLabelFor: (courseId: string | null) => string;
 }) {
   const fmt = (isoOrYmd: string) => {
-    const d = isoOrYmd.length === 10 ? new Date(`${isoOrYmd}T00:00:00.000Z`) : new Date(isoOrYmd);
+    const d =
+      isoOrYmd.length === 10
+        ? new Date(`${isoOrYmd}T00:00:00.000Z`)
+        : new Date(isoOrYmd);
     return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
   };
 
@@ -86,11 +92,13 @@ function HomeworkCard({
 
       <div className="homework-card__meta-row">
         <StatusBadge status={item.status} />
+
         <dl className="homework-meta">
           <div className="homework-meta__row">
             <dt>Course</dt>
-            <dd>{item.courseId}</dd>
+            <dd>{courseLabelFor(item.courseId)}</dd>
           </div>
+
           <div className="homework-meta__row">
             <dt>Due</dt>
             <dd>
@@ -131,7 +139,7 @@ function HomeworkForm({
 
     onAdd({
       title: title.value.trim(),
-      courseId: activeCourseId, // selected course from above
+      courseId: activeCourseId, // selected course UUID
       dueDate: dueDate.value.trim(),
     });
 
@@ -173,15 +181,31 @@ export default function HomeworkList({
   hw?: UseHomeworkApi;
   activeCourseId?: string;
 }) {
-  // use passed instance for real-time dashboard updates
   const hw = hwProp ?? useHomework();
+
+  // ✅ Courses list for label mapping (UUID -> CODE — Name)
+  const { list: courses } = useCourses();
+
+  const courseLabelFor = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const c of courses) map.set(c.id, `${c.code} — ${c.name}`);
+
+    return (courseId: string | null) => {
+      if (!courseId) return "Unassigned";
+      return map.get(courseId) ?? "Unassigned";
+    };
+  }, [courses]);
 
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | HomeworkStatus>("all");
 
   const filteredSorted = useMemo(() => {
-    const out = hw.list.filter((it: any) => (statusFilter === "all" ? true : it.status === statusFilter));
-    return [...out].sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+    const out = hw.list.filter((it: any) =>
+      statusFilter === "all" ? true : it.status === statusFilter,
+    );
+    return [...out].sort(
+      (a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(),
+    );
   }, [hw.list, statusFilter]);
 
   async function onAdd(input: { title: string; courseId: string; dueDate: string }) {
@@ -235,6 +259,7 @@ export default function HomeworkList({
               onToggleExpand={(id) => setExpandedId((prev) => (prev === id ? null : id))}
               onSetStatus={onSetStatus}
               onRemove={onRemove}
+              courseLabelFor={courseLabelFor}
             />
           </li>
         ))}
